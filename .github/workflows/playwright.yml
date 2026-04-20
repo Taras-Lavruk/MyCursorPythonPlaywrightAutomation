@@ -1,0 +1,62 @@
+name: Playwright Tests
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  schedule:
+    - cron: "0 6 * * *"   # daily at 06:00 UTC
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Install Playwright browsers
+        run: playwright install --with-deps chromium
+
+      - name: Run smoke tests
+        env:
+          BASE_URL: ${{ secrets.BASE_URL }}
+          HEADLESS: "true"
+        run: pytest -m smoke --tb=short
+
+      - name: Run full test suite
+        if: always()
+        env:
+          BASE_URL: ${{ secrets.BASE_URL }}
+          HEADLESS: "true"
+        run: pytest --tb=short
+
+      - name: Upload HTML report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: reports/
+          retention-days: 14
+
+      - name: Upload screenshots on failure
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: failure-screenshots
+          path: reports/screenshots/
+          retention-days: 7

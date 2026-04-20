@@ -1,0 +1,19 @@
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "--strict-markers",
+    "--html=reports/report.html",
+    "--self-contained-html",
+    "-v",
+]
+markers = [
+    "smoke: quick sanity checks",
+    "regression: full regression suite",
+    "e2e: end-to-end UI tests",
+    "api: API-level tests",
+    "slow: tests that take longer than usual",
+]
+timeout = 60

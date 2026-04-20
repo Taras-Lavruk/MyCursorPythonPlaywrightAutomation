@@ -1,0 +1,182 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+.Python
+*.egg-info/
+*.egg
+dist/
+build/
+.eggs/
+*.so
+*.dll
+*.dylib
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Pytest / test artifacts
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+nosetests.xml
+test-results/
+allure-results/
+allure-report/
+*.log
+
+# Playwright specific
+playwright/.auth/
+playwright-report/
+test-results/
+playwright/.cache/
+*.trace
+screenshots/
+videos/
+downloads/
+*.har
+
+# Generated HTML files (inspection/debugging)
+page_source.html
+login_page_html.html
+login.html
+*.debug.html
+
+# Reports
+reports/
+report.html
+*.report.html
+
+# Environment files
+.env
+.env.local
+.env.*.local
+*.env
+
+# Keep example environment file
+!.env.example
+
+# IDE - VSCode
+.vscode/
+*.code-workspace
+.history/
+
+# IDE - PyCharm / JetBrains
+.idea/
+*.iml
+*.ipr
+*.iws
+.idea_modules/
+
+# IDE - Vim
+*.swp
+*.swo
+*~
+.vim/
+
+# IDE - Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.directory
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# pytype static type analyzer
+.pytype/
+
+# Cython debug symbols
+cython_debug/
+
+# Temporary files
+*.tmp
+*.bak
+*.backup
+temp/
+tmp/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Node modules (if using any JS tooling)
+node_modules/
+package-lock.json
+yarn.lock
+
+# Compiled files
+*.com
+*.class
+*.exe
+*.o
+*.out
