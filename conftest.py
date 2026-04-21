@@ -26,15 +26,36 @@ def browser_context_args(browser_context_args: dict) -> dict:
             "height": settings.VIEWPORT_HEIGHT,
         },
         "ignore_https_errors": True,
-        "record_video_dir": "reports/videos" if os.getenv("RECORD_VIDEO") else None,
+        "record_video_dir": "reports/videos",
+        "record_video_size": {"width": 1280, "height": 720},
     }
 
 
 @pytest.fixture(scope="function")
-def context(browser: Browser, browser_context_args: dict) -> BrowserContext:
+def context(browser: Browser, browser_context_args: dict, request) -> BrowserContext:
     ctx = browser.new_context(**browser_context_args)
     ctx.set_default_timeout(settings.DEFAULT_TIMEOUT)
     yield ctx
+    
+    # Only save video if test failed
+    if request.node.rep_call.failed if hasattr(request.node, 'rep_call') else False:
+        video = ctx.pages[0].video if ctx.pages else None
+        if video:
+            video_path = video.path()
+            print(f"\n📹 Video saved for failed test: {video_path}")
+    else:
+        # Delete video if test passed
+        for page in ctx.pages:
+            if page.video:
+                try:
+                    video_path = page.video.path()
+                    ctx.close()
+                    if os.path.exists(video_path):
+                        os.remove(video_path)
+                except Exception:
+                    pass
+                return
+    
     ctx.close()
 
 
@@ -64,6 +85,9 @@ def api_request_context(playwright: Playwright):
 def pytest_runtest_makereport(item, call):
     outcome = yield
     report = outcome.get_result()
+    
+    # Store test result in the item for context fixture to access
+    setattr(item, f"rep_{report.when}", report)
 
     if report.when == "call" and report.failed:
         page: Page | None = item.funcargs.get("page")

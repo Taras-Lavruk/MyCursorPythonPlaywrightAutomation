@@ -60,3 +60,11 @@ jobs:
           name: failure-screenshots
           path: reports/screenshots/
           retention-days: 7
+
+      - name: Upload videos on failure
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: failure-videos
+          path: reports/videos/
+          retention-days: 7

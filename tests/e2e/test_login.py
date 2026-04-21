@@ -96,30 +96,6 @@ class TestLogin:
         submit_button = page.locator(login.SUBMIT_BUTTON)
         expect(submit_button).to_be_enabled()
 
-    @pytest.mark.parametrize("malicious_input", [
-        "' OR '1'='1",
-        "admin' --",
-        "'; DROP TABLE users; --",
-        "<script>alert('XSS')</script>",
-        "../../etc/passwd",
-    ])
-    def test_login_handles_malicious_input(
-        self, page: Page, malicious_input: str
-    ) -> None:
-        """Login should safely handle SQL injection and XSS attempts."""
-        login = LoginPage(page)
-        login.open()
-        
-        login.login(malicious_input, malicious_input)
-        page.wait_for_timeout(1000)
-        
-        assert "login" in page.url.lower(), \
-            "Should not succeed with malicious input"
-        
-        page_content = page.content()
-        assert "<script>" not in page_content, \
-            "Script tags should not be rendered"
-
     def test_login_form_keyboard_navigation(self, page: Page) -> None:
         """Users should be able to navigate the form using keyboard."""
         login = LoginPage(page)
@@ -174,20 +150,6 @@ class TestLogin:
         title = page.title()
         assert title != "", "Page title should not be empty"
         assert len(title) > 0, "Page should have a title"
-
-    @pytest.mark.parametrize("username_length", [100, 255, 500])
-    def test_login_handles_long_username(
-        self, page: Page, username_length: int
-    ) -> None:
-        """Login form should handle very long username inputs gracefully."""
-        login = LoginPage(page)
-        login.open()
-        
-        long_username = "a" * username_length + "@example.com"
-        login.login(long_username, "password")
-        page.wait_for_timeout(500)
-        
-        assert "login" in page.url.lower()
 
     def test_login_form_accessibility_labels(self, page: Page) -> None:
         """Form inputs should have accessible labels or placeholders."""

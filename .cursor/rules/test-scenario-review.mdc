@@ -1,0 +1,61 @@
+---
+description: Present test scenarios for review before implementation
+globs: **/test_*.py
+alwaysApply: false
+---
+
+# Test Scenario Review Workflow
+
+When creating or extending features that require testing:
+
+## Workflow Steps
+
+1. **Analyze Requirements**: Understand the feature requirements and identify testing needs
+2. **Propose Test Scenarios**: Present a clear list of testing scenarios covering:
+   - Happy path tests
+   - Edge cases
+   - Error conditions
+   - Boundary conditions
+   - Integration points
+3. **Wait for Approval**: Get explicit user approval before implementing any tests
+4. **Implement Only Approved Tests**: Only write test code for scenarios the user has accepted
+
+## Interactive Selection Format
+
+Use the `AskQuestion` tool with checkboxes to present test scenarios:
+
+1. **Present scenarios as text**: First, show the user all identified scenarios grouped by category
+2. **Use AskQuestion tool**: Create a multi-select question with `allow_multiple: true` containing all scenarios
+3. **Label format**: Use clear, concise labels like "Happy Path: User login with valid credentials"
+4. **Implement selected**: Only implement the scenarios the user checks
+
+### Example Implementation
+
+```
+I've identified the following test scenarios for user authentication:
+
+**Happy Path:**
+- Valid credentials login
+- Remember me functionality
+
+**Edge Cases:**
+- Empty username field
+- Empty password field
+- Very long username (>100 chars)
+
+**Error Handling:**
+- Invalid credentials
+- Account locked scenario
+- Network timeout during login
+
+[Then use AskQuestion tool with all scenarios as checkbox options]
+```
+
+## Important
+
+- **Always use checkboxes**: Use `AskQuestion` tool with `allow_multiple: true`
+- Never implement tests without explicit approval
+- Be thorough in scenario identification
+- Create clear, descriptive option labels
+- Group scenarios logically in the presentation text
+- Only implement checked scenarios
