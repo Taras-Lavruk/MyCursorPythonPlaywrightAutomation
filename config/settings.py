@@ -5,8 +5,9 @@ load_dotenv()
 
 
 class Settings:
-    BASE_URL: str = os.getenv("BASE_URL", "https://www.example.com")
-    API_BASE_URL: str = os.getenv("API_BASE_URL", "https://api.example.com")
+    BASE_URL: str = os.getenv("BASE_URL", "https://rc-manual.jiraalign.xyz/")
+    API_BASE_URL: str = os.getenv("API_BASE_URL", "https://rc-manual.jiraalign.xyz/rest/align/api/2")
+    API_BEARER_TOKEN: str = os.getenv("API_BEARER_TOKEN", "")
 
     TEST_USERNAME: str = os.getenv("TEST_USERNAME", "")
     TEST_PASSWORD: str = os.getenv("TEST_PASSWORD", "")
