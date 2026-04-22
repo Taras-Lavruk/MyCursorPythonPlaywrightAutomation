@@ -3,6 +3,13 @@
 ## Overview
 Comprehensive test suite for the login page functionality covering security, accessibility, user experience, and edge cases.
 
+**Note:** This file covers functional login tests. For structural and accessibility tests of the login page, see [LOGIN_PAGE_STRUCTURE_TESTS_README.md](./LOGIN_PAGE_STRUCTURE_TESTS_README.md).
+
+**Total Login Test Coverage:**
+- Functional tests (this file): 13 test methods (18 tests with parameterization)
+- Structural tests: 12 tests
+- **Combined Total: 30 tests**
+
 ## Test Coverage
 
 ### 1. Basic Functionality Tests
@@ -35,9 +42,14 @@ Comprehensive test suite for the login page functionality covering security, acc
 
 ## Running the Tests
 
-### Run all login tests
+### Run all functional login tests
 ```bash
 pytest tests/e2e/test_login.py -v
+```
+
+### Run all login tests (functional + structural)
+```bash
+pytest tests/e2e/test_login*.py -v
 ```
 
 ### Run specific test class
@@ -112,6 +124,18 @@ TEST_PASSWORD=ValidPassword123
 - [ ] Add tests for "Stay logged in" functionality
 - [ ] Add tests for social login (if applicable)
 - [ ] Add tests for two-factor authentication (if applicable)
+
+## Related Test Suites
+
+### Login Page Structure Tests
+See [LOGIN_PAGE_STRUCTURE_TESTS_README.md](./LOGIN_PAGE_STRUCTURE_TESTS_README.md) for:
+- Page structure and layout tests
+- Responsive design tests
+- Accessibility tests
+- Performance tests
+- HTML structure validation
+
+The structural tests complement these functional tests by ensuring the login page itself is properly structured, accessible, and performant.
 
 ## Notes
 - Some tests are parameterized to cover multiple scenarios efficiently

@@ -15,5 +15,6 @@ markers = [
     "e2e: end-to-end UI tests",
     "api: API-level tests",
     "slow: tests that take longer than usual",
+    "performance: performance and load time tests",
 ]
 timeout = 60
