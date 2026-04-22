@@ -211,7 +211,7 @@ Review the screenshot taken at failure
 pytest tests/e2e/test_login.py -k "test_login_page_loads or test_login_form_elements_visible"
 
 # Only security tests
-pytest tests/e2e/test_login.py -k "security or malicious"
+pytest tests/e2e/test_login.py -k "multiple_failed_attempts"
 
 # Exclude slow tests
 pytest tests/e2e/test_login.py -k "not slow"

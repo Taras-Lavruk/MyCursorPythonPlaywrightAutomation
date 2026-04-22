@@ -23,10 +23,6 @@ Comprehensive test suite for the login page functionality covering security, acc
 - **test_login_form_clears_on_submission**: Tests form field clearing functionality
 
 ### 4. Security Tests
-- **test_login_handles_malicious_input**: Tests against:
-  - SQL Injection attempts
-  - XSS (Cross-Site Scripting) attacks
-  - Path traversal attempts
 - **test_login_multiple_failed_attempts**: Tests behavior with consecutive failed logins
 
 ### 5. User Experience Tests
@@ -34,10 +30,7 @@ Comprehensive test suite for the login page functionality covering security, acc
 - **test_login_form_keyboard_navigation**: Tests Tab and Enter key navigation
 - **test_login_page_title_is_set**: Ensures page has a meaningful title
 
-### 6. Edge Cases
-- **test_login_handles_long_username**: Tests with extremely long inputs (100, 255, 500 characters)
-
-### 7. Accessibility Tests
+### 6. Accessibility Tests
 - **test_login_form_accessibility_labels**: Verifies form inputs have proper labels/placeholders/aria attributes
 
 ## Running the Tests
@@ -104,15 +97,16 @@ TEST_PASSWORD=ValidPassword123
 - Form data is preserved or cleared (based on implementation)
 
 ### Security
-- SQL injection attempts are safely handled
-- XSS attempts don't execute scripts
+- Multiple consecutive failed login attempts are handled
 - No sensitive data leaked in error messages
 
 ## Future Enhancements
-- [ ] Add tests for "Remember Me" functionality
+- [ ] Add tests for "Remember Me" functionality (locator defined but not implemented)
 - [ ] Add tests for "Forgot Password" link
 - [ ] Add tests for password visibility toggle
 - [ ] Add tests for rate limiting/account lockout
+- [ ] Add tests for SQL injection and XSS attacks
+- [ ] Add tests for handling extremely long username/password inputs
 - [ ] Add visual regression tests
 - [ ] Add performance/load time tests
 - [ ] Add tests for "Stay logged in" functionality

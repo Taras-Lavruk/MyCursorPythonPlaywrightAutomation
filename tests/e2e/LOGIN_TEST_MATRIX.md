@@ -16,14 +16,11 @@
 | | test_password_field_masks_input | P1 | ✅ | All | Security |
 | | test_login_form_clears_on_submission | P2 | ✅ | All | |
 | **Security Tests** |
-| | test_login_handles_malicious_input | P0 | ✅ | All | 5 attack vectors |
 | | test_login_multiple_failed_attempts | P1 | ✅ | All | |
 | **UX Tests** |
 | | test_submit_button_is_clickable | P2 | ✅ | All | |
 | | test_login_form_keyboard_navigation | P1 | ✅ | All | Accessibility |
 | | test_login_page_title_is_set | P2 | ✅ | All | |
-| **Edge Cases** |
-| | test_login_handles_long_username | P2 | ✅ | All | 3 lengths tested |
 | **Accessibility** |
 | | test_login_form_accessibility_labels | P1 | ✅ | All | WCAG compliance |
 
@@ -40,18 +37,6 @@
 3. Common credentials (admin/admin)
 4. Weak password
 
-### Malicious Input Test (5 attack vectors)
-1. SQL Injection: `' OR '1'='1`
-2. SQL Comment Injection: `admin' --`
-3. SQL DROP: `'; DROP TABLE users; --`
-4. XSS Attack: `<script>alert('XSS')</script>`
-5. Path Traversal: `../../etc/passwd`
-
-### Long Username Test (3 lengths)
-1. 100 characters
-2. 255 characters
-3. 500 characters
-
 ## Priority Levels
 
 - **P0 (Critical)**: Must pass for release. Blocking issues.
@@ -63,38 +48,40 @@
 
 | Metric | Coverage |
 |--------|----------|
-| **Total Test Cases** | 15 |
-| **Parameterized Scenarios** | 15 additional |
+| **Total Test Cases** | 13 |
+| **Parameterized Scenarios** | 7 additional |
 | **Critical Path Coverage** | 100% |
-| **Security Coverage** | High |
+| **Security Coverage** | Basic |
 | **Accessibility Coverage** | Basic |
 | **Browser Coverage** | Chromium (expandable) |
 
 ## Risk Assessment
 
 ### High Risk Areas Covered
-- ✅ SQL Injection attempts
-- ✅ XSS attacks
 - ✅ Empty field validation
 - ✅ Invalid credentials handling
 - ✅ Keyboard navigation
 
 ### Medium Risk Areas Covered
-- ✅ Long input handling
 - ✅ Form accessibility
 - ✅ Multiple failed attempts
 
-### Areas Not Yet Covered
+### Areas Not Yet Covered (High Priority)
+- ❌ SQL Injection attempts
+- ❌ XSS attacks
+- ❌ Long input handling (boundary testing)
 - ❌ Rate limiting / Account lockout
 - ❌ CSRF protection
 - ❌ Session management
-- ❌ Remember me functionality
+
+### Areas Not Yet Covered (Medium Priority)
+- ❌ Remember me functionality (locator defined but not implemented)
 - ❌ Forgot password flow
 - ❌ Password strength indicators
+- ❌ Password visibility toggle
 - ❌ Captcha handling (if present)
 - ❌ Social login (if present)
 - ❌ Two-factor authentication (if present)
-- ❌ Password visibility toggle
 
 ## Browser Compatibility
 
@@ -110,8 +97,8 @@
 |------|-------------------|---------|
 | test_login_page_loads | < 2s | 30s |
 | test_valid_login_redirects | < 5s | 30s |
-| test_login_handles_malicious_input | < 3s | 30s |
-| Full Suite | < 60s | N/A |
+| test_login_multiple_failed_attempts | < 3s | 30s |
+| Full Suite | < 45s | N/A |
 
 ## Execution Commands
 
@@ -136,7 +123,6 @@ make test-login-parallel
 
 Recommended CI configuration:
 - Run on every PR
-- Run security tests on schedule (daily)
 - Generate HTML reports
 - Store screenshots on failure
 - Parallel execution for faster feedback

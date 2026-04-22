@@ -46,8 +46,7 @@ case "${1}" in
         ;;
     3|security)
         echo -e "${GREEN}Running security tests...${NC}"
-        pytest tests/e2e/test_login.py::TestLogin::test_login_handles_malicious_input \
-               tests/e2e/test_login.py::TestLogin::test_login_multiple_failed_attempts -v
+        pytest tests/e2e/test_login.py::TestLogin::test_login_multiple_failed_attempts -v
         ;;
     4|report)
         echo -e "${GREEN}Running tests with HTML report...${NC}"

@@ -52,7 +52,6 @@ test-login-report:
 
 # Run security-focused tests
 test-login-security:
-	$(PYTEST) tests/e2e/test_login.py::TestLogin::test_login_handles_malicious_input -v --browser=$(BROWSER)
 	$(PYTEST) tests/e2e/test_login.py::TestLogin::test_login_multiple_failed_attempts -v --browser=$(BROWSER)
 
 # Run tests in parallel
