@@ -15,9 +15,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-        with:
-          ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
+        
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
