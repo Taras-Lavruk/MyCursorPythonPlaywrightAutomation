@@ -36,6 +36,8 @@ jobs:
       - name: Run smoke tests
         env:
           BASE_URL: ${{ secrets.BASE_URL }}
+          API_BASE_URL: ${{ secrets.API_BASE_URL }}
+          API_BEARER_TOKEN: ${{ secrets.API_BEARER_TOKEN }}
           HEADLESS: "true"
         run: pytest -m smoke --tb=short
 
@@ -43,6 +45,8 @@ jobs:
         if: always()
         env:
           BASE_URL: ${{ secrets.BASE_URL }}
+          API_BASE_URL: ${{ secrets.API_BASE_URL }}
+          API_BEARER_TOKEN: ${{ secrets.API_BEARER_TOKEN }}
           HEADLESS: "true"
         run: pytest --tb=short
 
