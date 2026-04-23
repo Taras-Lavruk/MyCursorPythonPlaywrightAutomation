@@ -1,83 +1,84 @@
 from playwright.sync_api import Page, expect
-from pages.base_page import BasePage
+from pages.header_page import HeaderPage
 
 
-class HomePage(BasePage):
-    """Page object for the authenticated home page (Home tab after login).
+class HomePage(HeaderPage):
+    """Page object for the authenticated Jira Align home page.
     
     Note: This page requires authentication. Users must log in first and will be 
     redirected to this page. Do not navigate directly to this page without logging in.
+    
+    URL after login: https://rc-manual.jiraalign.xyz/default?FirstTime=True
+    
+    The home page has NO left sidebar, only the top navigation header.
     """
-
-    # Locators
-    HEADING = "h1"
-    NAV_LINKS = "nav a"
-    NAV_ELEMENT = "nav, header nav"
-    HOME_TAB = "[data-testid='home-tab'], a[href*='home'], .home-tab"
-    SEARCH_INPUT = "[data-testid='search-input'], input[type='search'], #search"
-    SEARCH_BUTTON = "[data-testid='search-button'], button[type='submit']"
-    LOGO = "[data-testid='logo'], .logo, header img"
-    FOOTER = "footer"
-    MAIN_CONTENT = "main, [role='main'], .main-content"
-    CTA_BUTTON = "[data-testid='cta-button'], .cta-button, button.primary"
-    LOGOUT_LINK = "a[href*='logout'], a:has-text('Logout'), a:has-text('Sign Out')"
-    USER_PROFILE = "[data-testid='user-profile'], .user-profile, .user-menu"
+    
+    # Alert Banner
+    ALERT_BANNER = "[role='alert']"
+    ALERT_CLOSE_BUTTON = "[role='alert'] button"
+    
+    # Main Content Sections
+    RECENT_ROOMS_HEADING = "h3:has-text('Recent rooms')"
+    STARRED_HEADING = "h3:has-text('Starred')"
+    STARRED_VIEW_ALL = "a:has-text('View all')"
+    
+    # Content Cards (Portfolios, Programs, Teams)
+    PORTFOLIO_CARDS = ".card, [class*='portfolio'], [class*='card']"
+    CARD_TITLES = "[class*='card'] h4, [class*='card'] h3"
+    
+    # Main Content Area
+    MAIN_CONTENT = "main, [role='main']"
 
     def __init__(self, page: Page) -> None:
         super().__init__(page)
 
-    def get_heading_text(self) -> str:
-        return self.page.locator(self.HEADING).first.inner_text()
+    # Alert Banner Actions
+    def dismiss_alert_banner(self) -> None:
+        """Dismiss the alert banner if present."""
+        if self.page.locator(self.ALERT_BANNER).count() > 0:
+            self.page.locator(self.ALERT_CLOSE_BUTTON).click()
 
-    def search(self, query: str) -> None:
-        if self.page.locator(self.SEARCH_INPUT).count() > 0:
-            self.page.locator(self.SEARCH_INPUT).fill(query)
-            if self.page.locator(self.SEARCH_BUTTON).count() > 0:
-                self.page.locator(self.SEARCH_BUTTON).click()
+    def get_alert_message(self) -> str:
+        """Get the alert banner message text."""
+        return self.page.locator(self.ALERT_BANNER).inner_text()
 
-    def get_nav_links(self) -> list[str]:
-        return self.page.locator(self.NAV_LINKS).all_inner_texts()
+    # Content Section Methods
+    def is_recent_rooms_visible(self) -> bool:
+        """Check if Recent rooms section is visible."""
+        return self.page.locator(self.RECENT_ROOMS_HEADING).is_visible()
 
-    def get_nav_links_count(self) -> int:
-        return self.page.locator(self.NAV_LINKS).count()
+    def is_starred_section_visible(self) -> bool:
+        """Check if Starred section is visible."""
+        return self.page.locator(self.STARRED_HEADING).is_visible()
 
-    def click_home_tab(self) -> None:
-        """Click the Home tab to navigate to home page."""
-        self.page.locator(self.HOME_TAB).first.click()
+    def get_portfolio_cards_count(self) -> int:
+        """Get count of portfolio/program cards displayed."""
+        return self.page.locator(self.PORTFOLIO_CARDS).count()
 
-    def click_logout(self) -> None:
-        """Logout from the authenticated session."""
-        self.page.locator(self.LOGOUT_LINK).first.click()
+    def get_card_titles(self) -> list[str]:
+        """Get titles of all portfolio/program cards."""
+        return self.page.locator(self.CARD_TITLES).all_inner_texts()
 
-    def click_logo(self) -> None:
-        self.page.locator(self.LOGO).first.click()
+    def click_portfolio_card(self, title: str) -> None:
+        """Click a portfolio/program card by its title."""
+        self.page.locator(f"{self.CARD_TITLES}:has-text('{title}')").first.click()
 
+    def click_view_all_starred(self) -> None:
+        """Click 'View all' link in Starred section."""
+        self.page.locator(self.STARRED_VIEW_ALL).click()
+
+    # Page State Validations
     def expect_loaded(self) -> None:
         """Verify the home page is loaded after successful login."""
-        expect(self.page).to_have_title(lambda t: len(t) > 0)
+        expect(self.page).to_have_title("Jira Align")
         self.wait_for_load()
-
-    def expect_navigation_visible(self) -> None:
-        expect(self.page.locator(self.NAV_ELEMENT).first).to_be_visible()
+        self.expect_header_visible()
 
     def expect_main_content_visible(self) -> None:
+        """Verify main content area is visible."""
         expect(self.page.locator(self.MAIN_CONTENT).first).to_be_visible()
 
-    def expect_footer_visible(self) -> None:
-        expect(self.page.locator(self.FOOTER).first).to_be_visible()
-
-    def expect_user_authenticated(self) -> None:
-        """Verify user is authenticated and on the home page."""
-        expect(self.page.locator(self.LOGOUT_LINK).first).to_be_visible()
-        assert "login" not in self.page.url.lower(), "Should not be on login page"
-
-    def is_logo_visible(self) -> bool:
-        return self.page.locator(self.LOGO).first.is_visible()
-
-    def is_user_profile_visible(self) -> bool:
-        """Check if user profile/menu is visible (indicates authentication)."""
-        return self.page.locator(self.USER_PROFILE).count() > 0 and \
-               self.page.locator(self.USER_PROFILE).first.is_visible()
-
-    def has_search_feature(self) -> bool:
-        return self.page.locator(self.SEARCH_INPUT).count() > 0
+    def expect_home_sections_visible(self) -> None:
+        """Verify key home page sections are visible."""
+        expect(self.page.locator(self.RECENT_ROOMS_HEADING)).to_be_visible()
+        expect(self.page.locator(self.STARRED_HEADING)).to_be_visible()

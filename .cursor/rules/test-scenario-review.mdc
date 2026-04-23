@@ -1,9 +1,6 @@
 ---
-description: Present test scenarios for review before implementation
-globs: **/test_*.py
-alwaysApply: false
+alwaysApply: true
 ---
-
 # Test Scenario Review Workflow
 
 When creating or extending features that require testing:
