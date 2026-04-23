@@ -4,6 +4,10 @@ from config.settings import settings
 
 class BasePage:
     """Base page object — all page objects inherit from this."""
+    
+    # Cookie consent banner
+    COOKIE_BANNER = "#onetrust-banner-sdk, [id*='cookie'], [class*='cookie-banner']"
+    COOKIE_ACCEPT_BUTTON = "#onetrust-accept-btn-handler, button:has-text('Accept'), button:has-text('Accept all')"
 
     def __init__(self, page: Page) -> None:
         self.page = page
@@ -49,3 +53,17 @@ class BasePage:
 
     def expect_url_contains(self, fragment: str) -> None:
         expect(self.page).to_have_url(f".*{fragment}.*")
+    
+    def accept_cookies(self, timeout: int = 5000) -> None:
+        """Accept cookies if the banner is present."""
+        try:
+            cookie_button = self.page.locator(self.COOKIE_ACCEPT_BUTTON).first
+            if cookie_button.is_visible(timeout=timeout):
+                cookie_button.click()
+                self.page.wait_for_timeout(500)
+        except Exception:
+            pass
+    
+    def is_cookie_banner_visible(self) -> bool:
+        """Check if cookie consent banner is visible."""
+        return self.page.locator(self.COOKIE_BANNER).is_visible(timeout=2000)
