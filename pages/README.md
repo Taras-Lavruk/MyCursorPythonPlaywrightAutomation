@@ -15,6 +15,8 @@ BasePage (base_page.py)
     │
     └── SidebarPage (sidebar_page.py) - Pages with left sidebar
         │
+        ├── AdministrationPage (administration_page.py) - Admin settings
+        │
         └── GridPage (grid_page.py) - Data grid pages
             │
             ├── EpicGridPage (epic_grid_page.py)
@@ -162,6 +164,85 @@ expect_home_sections_visible()
 
 ---
 
+#### `AdministrationPage` (extends `SidebarPage`)
+System administration and configuration page.
+
+**Access:** Header → Settings Button → Administration
+
+**URL:** `/admin` or `/settings` (varies by instance)
+
+**Sections:**
+- General Settings (company, timezone, date format)
+- Users (user management)
+- Teams (team management)
+- Roles & Permissions (access control)
+- Integrations (third-party integrations)
+- Connectors (Jira, Azure DevOps, etc.)
+- Custom Fields (field configuration)
+- Workflows (workflow design)
+- Email (SMTP configuration)
+- Notifications (notification preferences)
+- Security (MFA, SSO, password policy)
+- Audit Log (activity tracking)
+- System (version, maintenance)
+- Licensing (license management)
+- API (API key management)
+
+**Key Methods:**
+```python
+# Navigation to sections
+navigate_to_users()
+navigate_to_teams()
+navigate_to_integrations()
+navigate_to_security()
+navigate_to_audit_log()
+
+# User management
+create_user(first_name, last_name, email, role)
+search_users(query)
+delete_user_by_email(email, confirm=True)
+
+# Team management
+click_add_team()
+search_teams(query)
+
+# Integration management
+enable_integration(integration_name)
+configure_integration(integration_name)
+test_integration(integration_name)
+
+# Security
+enable_mfa()
+enable_sso()
+set_session_timeout(minutes)
+
+# Audit log
+search_audit_log(query)
+filter_audit_log_by_date(from_date, to_date)
+export_audit_log()
+
+# System
+clear_cache()
+get_system_version()
+
+# API management
+create_api_key(name)
+revoke_api_key(key_name, confirm=True)
+
+# Validation
+expect_administration_page_visible()
+expect_section_loaded(section_title)
+expect_success_message()
+```
+
+**Documentation:** See `pages/ADMINISTRATION_PAGE.md` for detailed usage guide and examples.
+
+**Inherits from SidebarPage:**
+- Sidebar navigation methods
+- Plus HeaderPage and BasePage functionality
+
+---
+
 #### `EpicGridPage` (extends `GridPage`)
 Epics data grid page.
 
@@ -303,6 +384,44 @@ def test_home_page_navigation(page):
     home_page.click_home()  # Navigate back
     home_page.open_profile_menu()
     home_page.click_logout()
+```
+
+### Example 4: Administration Page
+
+```python
+from pages import HeaderPage, AdministrationPage
+
+def test_user_management(page, logged_in_page):
+    header = HeaderPage(page)
+    admin = AdministrationPage(page)
+    
+    # Navigate to Administration via Settings button
+    header.click_settings()
+    admin.expect_administration_page_visible()
+    
+    # Navigate to Users section
+    admin.navigate_to_users()
+    
+    # Search for users
+    admin.search_users("developer")
+    user_count = admin.get_users_count()
+    print(f"Found {user_count} developers")
+    
+    # Create new user
+    admin.create_user(
+        first_name="John",
+        last_name="Doe",
+        email="john.doe@example.com",
+        role="Standard User"
+    )
+    
+    # Verify success
+    admin.expect_success_message()
+    
+    # Navigate to Security settings
+    admin.navigate_to_security()
+    admin.enable_mfa()
+    admin.save_changes()
 ```
 
 ## Key Design Principles
