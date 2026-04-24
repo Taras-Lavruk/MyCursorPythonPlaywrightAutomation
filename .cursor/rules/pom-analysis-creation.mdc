@@ -1,0 +1,204 @@
+---
+description: Guidelines for analyzing pages and creating Page Object Models (POMs)
+alwaysApply: true
+---
+
+# Page Object Model (POM) Analysis & Creation
+
+## When to Apply This Rule
+
+⚠️ **ONLY apply this rule when the user explicitly requests:**
+- "Analyze this page and create POM"
+- "Create a Page Object Model for [page name]"
+- "Analyze [page name] page"
+- "Create POM for [specific page]"
+
+**DO NOT apply this rule for:**
+- General coding tasks
+- Test creation
+- Bug fixes
+- Refactoring existing code
+- Other development tasks
+
+---
+
+## POM Creation Process
+
+When the user requests page analysis and POM creation, follow this structured approach.
+
+## Step 1: Understand the Page Context
+
+### Access Path
+- Document how to reach the page (e.g., "Header → SETTINGS_BUTTON")
+- Identify the URL pattern if known
+- Note parent/child page relationships
+
+### Inheritance Structure
+Determine which base class to extend:
+- `BasePage` - For standalone pages (like LoginPage)
+- `HeaderPage` - Pages with header but no sidebar (like HomePage)
+- `SidebarPage` - Pages with header and sidebar
+- `GridPage` - Data grid pages with search/filter/pagination
+
+## Step 2: Identify Page Elements
+
+### Required Selectors
+1. **Page Identifiers** - Unique elements that confirm page loaded
+2. **Navigation Elements** - Sidebar links, tabs, section navigation
+3. **Action Elements** - Buttons, forms, inputs
+4. **Data Elements** - Tables, grids, lists, cards
+5. **Feedback Elements** - Success/error messages, alerts
+
+### Selector Strategy
+Use flexible, resilient selectors with fallbacks:
+
+```python
+# ✅ GOOD - Multiple fallbacks, case-insensitive
+SETTINGS_BUTTON = "button[aria-label*='setting' i], header button[title*='setting' i]"
+SEARCH_BOX = "input[type='search'], input[placeholder*='search' i]"
+
+# ❌ BAD - Brittle, single option
+SETTINGS_BUTTON = "#settings-btn-123"
+```
+
+## Step 3: Define Methods
+
+### Method Categories
+
+**Navigation Methods:**
+```python
+def navigate_to_section(self) -> None:
+    """Navigate to specific section."""
+    self.page.locator(self.SIDEBAR_SECTION).click()
+```
+
+**Action Methods:**
+```python
+def create_entity(self, params) -> None:
+    """Create a new entity with parameters."""
+    self.click_add_button()
+    # Fill form logic
+    self.save_changes()
+```
+
+**Query Methods:**
+```python
+def get_entity_count(self) -> int:
+    """Get number of entities in list."""
+    return self.page.locator(self.ENTITY_ROW).count()
+
+def search_entities(self, query: str) -> None:
+    """Search for entities."""
+    self.page.locator(self.SEARCH_BOX).fill(query)
+    self.page.keyboard.press("Enter")
+```
+
+**Validation Methods:**
+```python
+def expect_page_loaded(self) -> None:
+    """Verify page is loaded and visible."""
+    expect(self.page.locator(self.PAGE_IDENTIFIER)).to_be_visible()
+
+def expect_success_message(self) -> None:
+    """Verify success message displayed."""
+    expect(self.page.locator(self.SUCCESS_MESSAGE)).to_be_visible()
+```
+
+## Step 4: Documentation
+
+### Create Documentation File
+Always create `pages/PAGE_NAME.md` with:
+- Overview and access path
+- Architecture/inheritance
+- Key features
+- Usage examples (minimum 3)
+- Common workflows
+- Best practices
+
+### Update Project Documentation
+- Add to `pages/README.md` inheritance hierarchy
+- Add to `pages/__init__.py` exports
+- Include usage examples in README
+
+## DO NOT Create Tests
+
+⚠️ **IMPORTANT:** When analyzing and creating POMs:
+- **DO NOT** create test files automatically
+- Focus solely on the Page Object Model
+- Create comprehensive documentation instead
+- Tests will be created separately when explicitly requested
+
+## Output Deliverables
+
+When creating a POM, deliver:
+
+1. **Core POM File** - `pages/{page_name}_page.py`
+2. **Documentation** - `pages/{PAGE_NAME}.md`
+3. **Updated Exports** - `pages/__init__.py`
+4. **Updated README** - `pages/README.md`
+5. **Summary** - Quick overview document (optional)
+
+## Quality Checklist
+
+- [ ] Extends appropriate base class
+- [ ] Uses flexible selectors with fallbacks
+- [ ] Includes all major page sections
+- [ ] Has navigation methods for all sections
+- [ ] Includes CRUD methods where applicable
+- [ ] Has validation methods (`expect_*`)
+- [ ] Includes docstrings for all methods
+- [ ] No linter errors
+- [ ] Documentation created
+- [ ] Exports updated
+- [ ] README updated
+- [ ] **NO test files created**
+
+## Example Structure
+
+```python
+from playwright.sync_api import Page, expect
+from pages.sidebar_page import SidebarPage
+
+
+class ExamplePage(SidebarPage):
+    """Description of the page and its purpose.
+    
+    Access: Header → Button → Page
+    """
+
+    # Page Identifiers
+    PAGE_TITLE = "h1:has-text('Page Title')"
+    
+    # Sidebar Navigation
+    SIDEBAR_SECTION_1 = "a:has-text('Section 1')"
+    SIDEBAR_SECTION_2 = "a:has-text('Section 2')"
+    
+    # Action Elements
+    ADD_BUTTON = "button:has-text('Add'), button[title*='add' i]"
+    SAVE_BUTTON = "button:has-text('Save')"
+    
+    # Data Elements
+    DATA_TABLE = "table, [role='grid']"
+    
+    # Feedback
+    SUCCESS_MESSAGE = "[class*='success']"
+
+    def __init__(self, page: Page) -> None:
+        super().__init__(page)
+
+    # Navigation Methods
+    def navigate_to_section_1(self) -> None:
+        """Navigate to Section 1."""
+        self.page.locator(self.SIDEBAR_SECTION_1).click()
+
+    # Action Methods
+    def click_add(self) -> None:
+        """Open add form."""
+        self.page.locator(self.ADD_BUTTON).click()
+
+    # Validation Methods
+    def expect_page_loaded(self) -> None:
+        """Verify page is loaded."""
+        expect(self.page.locator(self.PAGE_TITLE)).to_be_visible()
+        self.expect_sidebar_visible()
+```
