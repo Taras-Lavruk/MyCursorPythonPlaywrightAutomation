@@ -7,13 +7,13 @@ alwaysApply: true
 
 ## When to Apply This Rule
 
-⚠️ **ONLY apply this rule when the user explicitly requests:**
+
 - "Analyze this page and create POM"
 - "Create a Page Object Model for [page name]"
 - "Analyze [page name] page"
 - "Create POM for [specific page]"
 
-**DO NOT apply this rule for:**
+
 - General coding tasks
 - Test creation
 - Bug fixes

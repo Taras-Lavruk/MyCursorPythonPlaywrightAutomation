@@ -5,9 +5,9 @@ from config.settings import settings
 class BasePage:
     """Base page object — all page objects inherit from this."""
     
-    # Cookie consent banner
-    COOKIE_BANNER = "#onetrust-banner-sdk, [id*='cookie'], [class*='cookie-banner']"
-    COOKIE_ACCEPT_BUTTON = "#onetrust-accept-btn-handler, button:has-text('Accept'), button:has-text('Accept all')"
+    # Cookie consent banner - Atlassian cookies dialog
+    COOKIE_BANNER = "[role='dialog'][aria-labelledby='cookiesTrackingNoticeLink'], [id*='cookie'], [class*='cookie-banner']"
+    COOKIE_ACCEPT_BUTTON = "button:has-text('Accept all'), [role='dialog'] button:has-text('Accept')"
 
     def __init__(self, page: Page) -> None:
         self.page = page
@@ -67,3 +67,13 @@ class BasePage:
     def is_cookie_banner_visible(self) -> bool:
         """Check if cookie consent banner is visible."""
         return self.page.locator(self.COOKIE_BANNER).is_visible(timeout=2000)
+    
+    def dismiss_license_message(self) -> None:
+        """Dismiss the license error message if present."""
+        try:
+            license_close = self.page.locator("#licenseMessage a, .licenseErrorMessage a").first
+            if license_close.is_visible(timeout=2000):
+                license_close.click()
+                self.page.wait_for_timeout(500)
+        except Exception:
+            pass

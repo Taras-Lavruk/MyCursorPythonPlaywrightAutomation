@@ -1,0 +1,147 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.9.6, pytest-8.3.5, pluggy-1.6.0 -- /Users/tlavruk/MyPythonPlaywrightAutomation/.venv/bin/python3
+cachedir: .pytest_cache
+metadata: {'Python': '3.9.6', 'Platform': 'macOS-26.4.1-arm64-arm-64bit', 'Packages': {'pytest': '8.3.5', 'pluggy': '1.6.0'}, 'Plugins': {'html': '4.1.1', 'metadata': '3.1.1', 'Faker': '33.1.0', 'rerunfailures': '14.0', 'playwright': '0.6.2', 'allure-pytest': '2.13.5', 'base-url': '2.1.0', 'timeout': '2.3.1', 'xdist': '3.6.1'}, 'Base URL': ''}
+rootdir: /Users/tlavruk/MyPythonPlaywrightAutomation
+configfile: pyproject.toml
+plugins: html-4.1.1, metadata-3.1.1, Faker-33.1.0, rerunfailures-14.0, playwright-0.6.2, allure-pytest-2.13.5, base-url-2.1.0, timeout-2.3.1, xdist-3.6.1
+timeout: 60.0s
+timeout method: signal
+timeout func_only: False
+collecting ... collected 1 item
+
+tests/e2e/test_administration_locator_inspector.py::test_inspect_administration_page_locators[chromium] 
+=== Attempting to navigate to administration page ===
+✓ Navigation successful, current URL: https://rc-manual.jiraalign.xyz/AdminEmailsOutLog?FirstTime=True
+
+================================================================================
+ADMINISTRATION PAGE LOCATOR INSPECTION REPORT
+================================================================================
+
+Current URL: https://rc-manual.jiraalign.xyz/AdminEmailsOutLog?FirstTime=True
+
+--- PAGE IDENTIFIERS ---
+✗ PAGE_TITLE: Not found
+✓ ADMIN_CONTAINER: Found 2, Visible: True, Text: '
+	
+ ACCESS CONTROLS
+
+		
+ Activity
+
+		
+ People
+
+		
+'
+
+--- SIDEBAR ---
+✗ SIDEBAR_CONTAINER: Not found
+  Selector used: aside, [class*='sidebar'], [class*='side-nav'], [id*='sidebar'], nav.sidebar, [role='navigation']:not(header), [data-testid*='sidebar' i]
+
+--- SIDEBAR LINKS (All visible links) ---
+Total sidebar links found: 0
+
+--- TESTING SIDEBAR NAVIGATION SELECTORS ---
+
+ACCESS CONTROLS:
+  ✗ Activity: Not found (selector: aside a:has-text('Activity'), [class*='sidebar'] a:has-text('Activity'), nav a:has-text('Activity'), a[href*='activity' i])
+  ✗ People: Not found (selector: aside a:has-text('People'), [class*='sidebar'] a:has-text('People'), nav a:has-text('People'), a[href*='people' i])
+  ✓ Roles: Found 1, Visible: True
+
+CONNECTORS:
+  ✗ Azure DevOps: Not found (selector: aside a:has-text('Azure DevOps'), [class*='sidebar'] a:has-text('Azure DevOps'), nav a:has-text('Azure DevOps'), a[href*='azure' i])
+  ✗ Jira Settings: Not found (selector: aside a:has-text('Jira Settings'), [class*='sidebar'] a:has-text('Jira Settings'), nav a:has-text('Jira Settings'), a[href*='jira-settings' i])
+  ✗ Jira Management: Not found (selector: aside a:has-text('Jira Management'), [class*='sidebar'] a:has-text('Jira Management'), nav a:has-text('Jira Management'), a[href*='jira-management' i])
+  ✓ Manual Import: Found 1, Visible: True
+
+LOGS:
+  ✗ Changes: Not found (selector: aside a:has-text('Changes'), [class*='sidebar'] a:has-text('Changes'), nav a:has-text('Changes'), a[href*='changes' i], a[href*='changelog' i])
+  ✓ Email Logs: Found 3, Visible: True
+  ✗ Use Trend: Not found (selector: aside a:has-text('Use Trend'), [class*='sidebar'] a:has-text('Use Trend'), nav a:has-text('Use Trend'), a[href*='trend' i])
+
+SETTINGS:
+  ✗ Announcement: Not found (selector: aside a:has-text('Announcement'), [class*='sidebar'] a:has-text('Announcement'), a[href*='announcement' i])
+  ✓ Details Panels: Found 1, Visible: True
+  ✗ Platform: Not found (selector: aside a:has-text('Platform'), [class*='sidebar'] a:has-text('Platform'), nav a:has-text('Platform'), a[href*='platform' i])
+  ✓ Platform Terminology: Found 1, Visible: True
+  ✓ Time Tracking: Found 30, Visible: True
+
+SETUP:
+  ✗ Cities: Not found (selector: aside a:has-text('Cities'), [class*='sidebar'] a:has-text('Cities'), nav a:has-text('Cities'), a[href*='cities' i])
+  ✗ Customers: Not found (selector: aside a:has-text('Customers'), [class*='sidebar'] a:has-text('Customers'), nav a:has-text('Customers'), a[href*='customers' i])
+  ✓ Cost Centers: Found 2, Visible: True
+  ✗ Portfolios: Not found (selector: aside a:has-text('Portfolios'), [class*='sidebar'] a:has-text('Portfolios'), nav a:has-text('Portfolios'), a[href*='portfolios' i])
+  ✗ Programs: Not found (selector: aside a:has-text('Programs'), [class*='sidebar'] a:has-text('Programs'), nav a:has-text('Programs'), a[href*='programs' i])
+  ✗ Regions: Not found (selector: aside a:has-text('Regions'), [class*='sidebar'] a:has-text('Regions'), nav a:has-text('Regions'), a[href*='regions' i])
+
+SUPPORT:
+  ✗ Community: Not found (selector: aside a:has-text('Community'), [class*='sidebar'] a:has-text('Community'), nav a:has-text('Community'), a[href*='community' i])
+  ✗ Updates: Not found (selector: aside a:has-text('Updates'), [class*='sidebar'] a:has-text('Updates'), nav a:has-text('Updates'), a[href*='updates' i])
+  ✓ Version: Found 1, Visible: True
+
+--- CONTENT AREA ELEMENTS ---
+✗ CONTENT_AREA: Not found
+✓ SECTION_HEADER: Found 4, Visible: False
+✗ SAVE_BUTTON: Not found
+✗ CANCEL_BUTTON: Not found
+
+--- GENERIC TABLE ELEMENTS ---
+✓ GENERIC_TABLE: Found 6
+✓ GENERIC_ADD_BUTTON: Found 1
+✗ GENERIC_SEARCH: Found 0
+✓ GENERIC_TABLE_ROW: Found 63
+
+--- SCREENSHOTS ---
+✓ Full page screenshot: admin_page_inspection.png
+✓ Full HTML saved: admin_page_full.html
+
+--- SIDEBAR STRUCTURE ANALYSIS ---
+Looking for sidebar container variations:
+  ✓ '[class*='nav']': Found 3
+    Classes: new-navigation-enabled
+
+================================================================================
+INSPECTION COMPLETE
+================================================================================
+
+
+--- DIAGNOSTIC: PAGE STRUCTURE ---
+Total <aside> elements: 0
+Total <nav> elements: 1
+Total <main> elements: 0
+Elements with sidebar-like classes: 0
+Elements with content-like classes: 7
+
+Elements with role attributes:
+  role='dialog': 1
+  role='presentation': 7
+  role='banner': 1
+  role='img': 3
+  role='list': 2
+  role='listitem': 6
+
+Common class name patterns:
+  Found 0 unique class prefixes (sample): []
+
+--- ATTEMPTING TO IDENTIFY STRUCTURE ---
+✓ Found potential container: div[class*='app'] (count: 3)
+✓ Found potential container: div[class*='wrapper'] (count: 3)
+
+⚠ WARNING: SIDEBAR_CONTAINER not found
+   Selector used: aside, [class*='sidebar'], [class*='side-nav'], [id*='sidebar'], nav.sidebar, [role='navigation']:not(header), [data-testid*='sidebar' i]
+
+⚠ WARNING: CONTENT_AREA not found
+   Selector used: main, [role='main'], [class*='admin-content'], [class*='content-area'], [class*='admin-panel'], [class*='main-content']
+
+⚠ SUMMARY: Critical elements not found: SIDEBAR_CONTAINER, CONTENT_AREA
+Review the diagnostic output above to identify correct selectors
+
+================================================================================
+This is an informational test - check the output above for actual page structure
+================================================================================
+
+SKIPPEDNTENT_AREA)
+
+- Generated html report: file:///Users/tlavruk/MyPythonPlaywrightAutomation/reports/report.html -
+============================= 1 skipped in 16.02s ==============================
