@@ -26,6 +26,43 @@ alwaysApply: true
 
 When the user requests page analysis and POM creation, follow this structured approach.
 
+## Step 0: Navigate and Analyze the Live Page
+
+**IMPORTANT:** Before creating the POM, you MUST navigate to the actual page using browser automation:
+
+1. **Use Playwright MCP Tool** to navigate to the page:
+   - Use login credentials to authenticate if required
+   - Navigate through the application to reach the target page
+   - Take screenshots to document the page structure
+   - Inspect actual elements, selectors, and page behavior
+
+2. **Live Analysis Benefits:**
+   - See actual page elements and their attributes
+   - Identify correct selectors by inspecting real DOM
+   - Understand page interactions and workflows
+   - Capture screenshots for documentation
+   - Verify page hierarchy and navigation paths
+
+3. **Analysis Process:**
+   ```
+   a) Login to the application
+   b) Navigate to the target page
+   c) Take screenshot of the page
+   d) Inspect key elements and their selectors
+   e) Document navigation path and page structure
+   f) Note any dynamic content or interactions
+   ```
+
+**Example Navigation:**
+```python
+# Use Playwright MCP to:
+# 1. Navigate to login page
+# 2. Enter credentials
+# 3. Navigate to target page
+# 4. Take screenshots
+# 5. Analyze page elements
+```
+
 ## Step 1: Understand the Page Context
 
 ### Access Path

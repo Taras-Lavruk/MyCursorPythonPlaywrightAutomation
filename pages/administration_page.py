@@ -3,33 +3,67 @@ from pages.sidebar_page import SidebarPage
 
 
 class AdministrationPage(SidebarPage):
-    """Administration page for system-wide settings and configurations.
+    """Administration page for Jira Align system-wide settings and configurations.
     
-    Accessed via Header -> SETTINGS_BUTTON
-    Contains left sidebar navigation for different admin sections.
+    Accessed via: Header -> SETTINGS_BUTTON (click_settings method in HeaderPage)
+    
+    The administration sidebar is organized into 6 main categories:
+    - ACCESS CONTROLS: Activity, People, Roles
+    - CONNECTORS: Azure DevOps, Jira Settings, Jira Management, Manual Import
+    - LOGS: Changes, Email, Use Trend
+    - SETTINGS: Announcement, Details Panels, Email, Platform, Terminology, etc.
+    - SETUP: Cities, Customers, Cost Centers, Portfolios, Programs, Regions, etc.
+    - SUPPORT: Community, Updates, Version
     """
 
     # Page Identifiers
     PAGE_TITLE = "h1:has-text('Administration'), h1:has-text('Settings')"
     ADMIN_CONTAINER = "[class*='admin'], [class*='settings-page']"
     
-    # Left Sidebar Navigation - Admin Sections
-    SIDEBAR_GENERAL = "a:has-text('General')"
-    SIDEBAR_USERS = "a:has-text('Users')"
-    SIDEBAR_TEAMS = "a:has-text('Teams')"
-    SIDEBAR_ROLES = "a:has-text('Roles'), a:has-text('Permissions')"
-    SIDEBAR_INTEGRATIONS = "a:has-text('Integrations')"
-    SIDEBAR_CONNECTORS = "a:has-text('Connectors')"
-    SIDEBAR_CUSTOM_FIELDS = "a:has-text('Custom Fields')"
-    SIDEBAR_WORKFLOWS = "a:has-text('Workflows')"
-    SIDEBAR_EMAIL = "a:has-text('Email')"
-    SIDEBAR_NOTIFICATIONS = "a:has-text('Notifications')"
-    SIDEBAR_SECURITY = "a:has-text('Security')"
-    SIDEBAR_AUDIT_LOG = "a:has-text('Audit Log')"
-    SIDEBAR_SYSTEM = "a:has-text('System')"
-    SIDEBAR_LICENSING = "a:has-text('Licensing'), a:has-text('License')"
-    SIDEBAR_BACKUP = "a:has-text('Backup')"
-    SIDEBAR_API = "a:has-text('API')"
+    # Left Sidebar Navigation - ACCESS CONTROLS Section
+    SIDEBAR_ACTIVITY = "a:has-text('Activity')"
+    SIDEBAR_PEOPLE = "a:has-text('People')"
+    SIDEBAR_ROLES = "a:has-text('Roles')"
+    
+    # Left Sidebar Navigation - CONNECTORS Section
+    SIDEBAR_AZURE_DEVOPS = "a:has-text('Azure DevOps Settings')"
+    SIDEBAR_JIRA_SETTINGS = "a:has-text('Jira Settings')"
+    SIDEBAR_JIRA_MANAGEMENT = "a:has-text('Jira Management')"
+    SIDEBAR_MANUAL_IMPORT = "a:has-text('Manual Import')"
+    
+    # Left Sidebar Navigation - LOGS Section
+    SIDEBAR_CHANGES = "a:has-text('Changes')"
+    SIDEBAR_LOGS_EMAIL = "aside a:has-text('Email')"  # More specific to avoid conflict with Settings > Email
+    SIDEBAR_USE_TREND = "a:has-text('Use Trend')"
+    
+    # Left Sidebar Navigation - SETTINGS Section
+    SIDEBAR_ANNOUNCEMENT = "a:has-text('Announcement')"
+    SIDEBAR_DETAILS_PANELS = "a:has-text('Details Panels Settings')"
+    SIDEBAR_EMAIL = "aside a:has-text('Email')"  # First Email link in sidebar
+    SIDEBAR_EMAIL_SETTINGS = "a:has-text('Email Settings')"
+    SIDEBAR_PLATFORM = "a:has-text('Platform')"
+    SIDEBAR_PLATFORM_TERMINOLOGY = "a:has-text('Platform Terminology')"
+    SIDEBAR_REPORT_BASELINE = "a:has-text('Report Baseline')"
+    SIDEBAR_TIME_TRACKING = "a:has-text('Time Tracking')"
+    SIDEBAR_USER_RECORD_TERMINOLOGY = "a:has-text('User Record Terminology')"
+    
+    # Left Sidebar Navigation - SETUP Section
+    SIDEBAR_CITIES = "a:has-text('Cities')"
+    SIDEBAR_CUSTOMERS = "a:has-text('Customers')"
+    SIDEBAR_COST_CENTERS = "a:has-text('Cost Centers')"
+    SIDEBAR_CUSTOM_HIERARCHIES = "a:has-text('Custom Hierarchies')"
+    SIDEBAR_FUNCTIONAL_AREAS = "a:has-text('Functional Areas')"
+    SIDEBAR_ORGANIZATION_STRUCTURES = "a:has-text('Organization Structures')"
+    SIDEBAR_PORTFOLIOS = "a:has-text('Portfolios')"
+    SIDEBAR_PROGRAMS = "a:has-text('Programs')"
+    SIDEBAR_REGIONS = "a:has-text('Regions')"
+    SIDEBAR_THEME_GROUPS = "a:has-text('Theme Groups')"
+    SIDEBAR_ENTERPRISE_INSIGHTS = "a:has-text('Enterprise Insights')"
+    
+    # Left Sidebar Navigation - SUPPORT Section
+    SIDEBAR_COMMUNITY = "a:has-text('Community')"
+    SIDEBAR_UPDATES = "a:has-text('Updates')"
+    SIDEBAR_VERSION = "a:has-text('Version')"
     
     # Content Area - Common Elements
     CONTENT_AREA = "[class*='content'], [class*='admin-panel'], main"
@@ -38,131 +72,25 @@ class AdministrationPage(SidebarPage):
     CANCEL_BUTTON = "button:has-text('Cancel')"
     RESET_BUTTON = "button:has-text('Reset')"
     
-    # General Settings Section
-    GENERAL_COMPANY_NAME = "input[name*='company' i], input[placeholder*='company' i]"
-    GENERAL_TIMEZONE = "select[name*='timezone' i], select[placeholder*='timezone' i]"
-    GENERAL_DATE_FORMAT = "select[name*='date' i], select[placeholder*='format' i]"
-    GENERAL_LANGUAGE = "select[name*='language' i], select[placeholder*='language' i]"
+    # Generic Content Area Elements - Reusable across all sections
+    GENERIC_TABLE = "table, [role='grid']"
+    GENERIC_ADD_BUTTON = "button:has-text('Add'), button:has-text('Create'), button:has-text('New')"
+    GENERIC_SEARCH = "input[type='search'], input[placeholder*='search' i]"
+    GENERIC_FILTER = "button:has-text('Filter')"
+    GENERIC_EXPORT = "button:has-text('Export')"
+    GENERIC_TABLE_ROW = "table tbody tr, [role='row']"
+    GENERIC_EDIT_BUTTON = "button[title*='edit' i], a[href*='edit']"
+    GENERIC_DELETE_BUTTON = "button[title*='delete' i], button[title*='remove' i]"
     
-    # Users Section
-    USERS_TABLE = "table, [role='grid']"
-    USERS_ADD_BUTTON = "button:has-text('Add User'), button:has-text('Create User')"
-    USERS_SEARCH = "input[type='search'], input[placeholder*='search' i]"
-    USERS_FILTER = "button:has-text('Filter')"
-    USERS_EXPORT = "button:has-text('Export')"
-    USERS_ROW = "table tbody tr, [role='row']"
-    USERS_EMAIL_COLUMN = "td[data-column*='email' i], td:nth-child(2)"
-    USERS_ROLE_COLUMN = "td[data-column*='role' i], td:nth-child(3)"
-    USERS_STATUS_COLUMN = "td[data-column*='status' i], td:nth-child(4)"
-    USERS_ACTIONS_COLUMN = "td[data-column*='action' i], td:last-child"
-    
-    # User Actions (Row-level)
-    USER_EDIT_BUTTON = "button[title*='edit' i], a[href*='edit']"
-    USER_DELETE_BUTTON = "button[title*='delete' i], button[title*='remove' i]"
-    USER_ACTIVATE_BUTTON = "button:has-text('Activate')"
-    USER_DEACTIVATE_BUTTON = "button:has-text('Deactivate')"
-    
-    # Add/Edit User Modal/Form
-    USER_MODAL = "[role='dialog'], [class*='modal']"
-    USER_FORM = "form, [class*='user-form']"
-    USER_FIRST_NAME = "input[name*='first' i], input[placeholder*='first' i]"
-    USER_LAST_NAME = "input[name*='last' i], input[placeholder*='last' i]"
-    USER_EMAIL = "input[name*='email' i], input[type='email']"
-    USER_ROLE = "select[name*='role' i], select[placeholder*='role' i]"
-    USER_TEAM = "select[name*='team' i], select[placeholder*='team' i]"
-    USER_STATUS = "select[name*='status' i]"
-    USER_SAVE_BUTTON = "[role='dialog'] button:has-text('Save'), form button[type='submit']"
-    USER_CANCEL_BUTTON = "[role='dialog'] button:has-text('Cancel')"
-    
-    # Teams Section
-    TEAMS_TABLE = "table, [role='grid']"
-    TEAMS_ADD_BUTTON = "button:has-text('Add Team'), button:has-text('Create Team')"
-    TEAMS_SEARCH = "input[type='search'], input[placeholder*='search' i]"
-    TEAMS_ROW = "table tbody tr, [role='row']"
-    
-    # Roles & Permissions Section
-    ROLES_TABLE = "table, [role='grid']"
-    ROLES_ADD_BUTTON = "button:has-text('Add Role'), button:has-text('Create Role')"
-    ROLES_SEARCH = "input[type='search'], input[placeholder*='search' i]"
-    PERMISSIONS_GRID = "[class*='permissions'], [class*='capabilities']"
-    PERMISSION_CHECKBOX = "input[type='checkbox']"
-    
-    # Integrations Section
-    INTEGRATIONS_LIST = "[class*='integration'], [class*='connector']"
-    INTEGRATIONS_ADD_BUTTON = "button:has-text('Add Integration'), button:has-text('Configure')"
-    INTEGRATION_CARD = "[class*='card'], [class*='integration-item']"
-    INTEGRATION_ENABLE_TOGGLE = "input[type='checkbox'], button[role='switch']"
-    INTEGRATION_CONFIGURE_BUTTON = "button:has-text('Configure'), button:has-text('Settings')"
-    INTEGRATION_TEST_BUTTON = "button:has-text('Test Connection')"
-    
-    # Connectors Section (Jira, Azure DevOps, etc.)
-    CONNECTORS_TABLE = "table, [role='grid']"
-    CONNECTORS_ADD_BUTTON = "button:has-text('Add Connector'), button:has-text('New Connector')"
-    CONNECTOR_TYPE_SELECT = "select[name*='type' i], select[placeholder*='type' i]"
-    CONNECTOR_URL = "input[name*='url' i], input[placeholder*='url' i]"
-    CONNECTOR_USERNAME = "input[name*='username' i], input[placeholder*='username' i]"
-    CONNECTOR_PASSWORD = "input[type='password']"
-    CONNECTOR_TOKEN = "input[name*='token' i], input[placeholder*='token' i]"
-    
-    # Custom Fields Section
-    CUSTOM_FIELDS_TABLE = "table, [role='grid']"
-    CUSTOM_FIELDS_ADD_BUTTON = "button:has-text('Add Field'), button:has-text('Create Field')"
-    CUSTOM_FIELD_NAME = "input[name*='name' i], input[placeholder*='name' i]"
-    CUSTOM_FIELD_TYPE = "select[name*='type' i], select[placeholder*='type' i]"
-    CUSTOM_FIELD_ENTITY = "select[name*='entity' i], select[placeholder*='entity' i]"
-    
-    # Workflows Section
-    WORKFLOWS_TABLE = "table, [role='grid']"
-    WORKFLOWS_ADD_BUTTON = "button:has-text('Add Workflow'), button:has-text('Create Workflow')"
-    WORKFLOW_NAME = "input[name*='workflow' i], input[placeholder*='workflow' i]"
-    WORKFLOW_CANVAS = "[class*='workflow-designer'], [class*='canvas']"
-    
-    # Email Configuration Section
-    EMAIL_SMTP_HOST = "input[name*='smtp' i], input[placeholder*='host' i]"
-    EMAIL_SMTP_PORT = "input[name*='port' i], input[type='number']"
-    EMAIL_USERNAME = "input[name*='username' i], input[placeholder*='username' i]"
-    EMAIL_PASSWORD = "input[type='password']"
-    EMAIL_FROM_ADDRESS = "input[name*='from' i], input[type='email']"
-    EMAIL_TEST_BUTTON = "button:has-text('Test Email'), button:has-text('Send Test')"
-    
-    # Security Section
-    SECURITY_PASSWORD_POLICY = "[class*='password-policy']"
-    SECURITY_SESSION_TIMEOUT = "input[name*='session' i], input[name*='timeout' i]"
-    SECURITY_MFA_ENABLE = "input[type='checkbox'][name*='mfa' i]"
-    SECURITY_SSO_ENABLE = "input[type='checkbox'][name*='sso' i]"
-    SECURITY_IP_WHITELIST = "textarea[name*='whitelist' i], textarea[placeholder*='ip' i]"
-    
-    # Audit Log Section
-    AUDIT_LOG_TABLE = "table, [role='grid']"
-    AUDIT_LOG_SEARCH = "input[type='search'], input[placeholder*='search' i]"
-    AUDIT_LOG_DATE_FROM = "input[type='date'][name*='from' i]"
-    AUDIT_LOG_DATE_TO = "input[type='date'][name*='to' i]"
-    AUDIT_LOG_USER_FILTER = "select[name*='user' i], input[placeholder*='user' i]"
-    AUDIT_LOG_ACTION_FILTER = "select[name*='action' i], select[placeholder*='event' i]"
-    AUDIT_LOG_EXPORT = "button:has-text('Export')"
-    
-    # System Section
-    SYSTEM_VERSION = "[class*='version'], p:has-text('Version')"
-    SYSTEM_STATUS = "[class*='status'], [class*='health']"
-    SYSTEM_MAINTENANCE_MODE = "input[type='checkbox'][name*='maintenance' i]"
-    SYSTEM_CLEAR_CACHE = "button:has-text('Clear Cache')"
-    SYSTEM_RESTART = "button:has-text('Restart')"
-    
-    # Licensing Section
-    LICENSE_KEY = "input[name*='license' i], textarea[name*='license' i]"
-    LICENSE_STATUS = "[class*='license-status']"
-    LICENSE_EXPIRY = "[class*='expiry'], p:has-text('Expires')"
-    LICENSE_USERS_COUNT = "[class*='users'], p:has-text('Users')"
-    LICENSE_UPLOAD_BUTTON = "button:has-text('Upload License')"
-    LICENSE_VALIDATE_BUTTON = "button:has-text('Validate')"
-    
-    # API Section
-    API_KEYS_TABLE = "table, [role='grid']"
-    API_ADD_KEY_BUTTON = "button:has-text('Generate Key'), button:has-text('Create Key')"
-    API_KEY_NAME = "input[name*='name' i], input[placeholder*='name' i]"
-    API_KEY_VALUE = "input[readonly], code, [class*='api-key']"
-    API_KEY_REVOKE = "button:has-text('Revoke')"
-    API_DOCUMENTATION_LINK = "a:has-text('API Documentation')"
+    # Generic Modal/Form Elements
+    GENERIC_MODAL = "[role='dialog'], [class*='modal']"
+    GENERIC_FORM = "form"
+    GENERIC_INPUT = "input[type='text']"
+    GENERIC_SELECT = "select"
+    GENERIC_TEXTAREA = "textarea"
+    GENERIC_CHECKBOX = "input[type='checkbox']"
+    GENERIC_MODAL_SAVE = "[role='dialog'] button:has-text('Save'), [role='dialog'] button[type='submit']"
+    GENERIC_MODAL_CANCEL = "[role='dialog'] button:has-text('Cancel')"
     
     # Confirmation Dialogs
     CONFIRM_DIALOG = "[role='alertdialog'], [class*='confirm-dialog']"
@@ -178,266 +106,205 @@ class AdministrationPage(SidebarPage):
     def __init__(self, page: Page) -> None:
         super().__init__(page)
 
-    # Navigation Methods
-    def navigate_to_general(self) -> None:
-        """Navigate to General Settings section."""
-        self.page.locator(self.SIDEBAR_GENERAL).click()
+    # Navigation Methods - ACCESS CONTROLS
+    def navigate_to_activity(self) -> None:
+        """Navigate to Activity section."""
+        self.page.locator(self.SIDEBAR_ACTIVITY).click()
 
-    def navigate_to_users(self) -> None:
-        """Navigate to Users management section."""
-        self.page.locator(self.SIDEBAR_USERS).click()
-
-    def navigate_to_teams(self) -> None:
-        """Navigate to Teams management section."""
-        self.page.locator(self.SIDEBAR_TEAMS).click()
+    def navigate_to_people(self) -> None:
+        """Navigate to People management section."""
+        self.page.locator(self.SIDEBAR_PEOPLE).click()
 
     def navigate_to_roles(self) -> None:
-        """Navigate to Roles & Permissions section."""
+        """Navigate to Roles section."""
         self.page.locator(self.SIDEBAR_ROLES).click()
 
-    def navigate_to_integrations(self) -> None:
-        """Navigate to Integrations section."""
-        self.page.locator(self.SIDEBAR_INTEGRATIONS).click()
+    # Navigation Methods - CONNECTORS
+    def navigate_to_azure_devops(self) -> None:
+        """Navigate to Azure DevOps Settings section."""
+        self.page.locator(self.SIDEBAR_AZURE_DEVOPS).click()
 
-    def navigate_to_connectors(self) -> None:
-        """Navigate to Connectors section."""
-        self.page.locator(self.SIDEBAR_CONNECTORS).click()
+    def navigate_to_jira_settings(self) -> None:
+        """Navigate to Jira Settings section."""
+        self.page.locator(self.SIDEBAR_JIRA_SETTINGS).click()
 
-    def navigate_to_custom_fields(self) -> None:
-        """Navigate to Custom Fields section."""
-        self.page.locator(self.SIDEBAR_CUSTOM_FIELDS).click()
+    def navigate_to_jira_management(self) -> None:
+        """Navigate to Jira Management section."""
+        self.page.locator(self.SIDEBAR_JIRA_MANAGEMENT).click()
 
-    def navigate_to_workflows(self) -> None:
-        """Navigate to Workflows section."""
-        self.page.locator(self.SIDEBAR_WORKFLOWS).click()
+    def navigate_to_manual_import(self) -> None:
+        """Navigate to Manual Import section."""
+        self.page.locator(self.SIDEBAR_MANUAL_IMPORT).click()
+
+    # Navigation Methods - LOGS
+    def navigate_to_changes(self) -> None:
+        """Navigate to Changes log section."""
+        self.page.locator(self.SIDEBAR_CHANGES).click()
+
+    def navigate_to_email_logs(self) -> None:
+        """Navigate to Email logs section."""
+        self.page.locator(self.SIDEBAR_LOGS_EMAIL).click()
+
+    def navigate_to_use_trend(self) -> None:
+        """Navigate to Use Trend section."""
+        self.page.locator(self.SIDEBAR_USE_TREND).click()
+
+    # Navigation Methods - SETTINGS
+    def navigate_to_announcement(self) -> None:
+        """Navigate to Announcement settings section."""
+        self.page.locator(self.SIDEBAR_ANNOUNCEMENT).click()
+
+    def navigate_to_details_panels(self) -> None:
+        """Navigate to Details Panels Settings section."""
+        self.page.locator(self.SIDEBAR_DETAILS_PANELS).click()
 
     def navigate_to_email(self) -> None:
-        """Navigate to Email configuration section."""
+        """Navigate to Email settings section."""
         self.page.locator(self.SIDEBAR_EMAIL).click()
 
-    def navigate_to_notifications(self) -> None:
-        """Navigate to Notifications section."""
-        self.page.locator(self.SIDEBAR_NOTIFICATIONS).click()
+    def navigate_to_email_settings(self) -> None:
+        """Navigate to Email Settings section."""
+        self.page.locator(self.SIDEBAR_EMAIL_SETTINGS).click()
 
-    def navigate_to_security(self) -> None:
-        """Navigate to Security settings section."""
-        self.page.locator(self.SIDEBAR_SECURITY).click()
+    def navigate_to_platform(self) -> None:
+        """Navigate to Platform settings section."""
+        self.page.locator(self.SIDEBAR_PLATFORM).click()
 
-    def navigate_to_audit_log(self) -> None:
-        """Navigate to Audit Log section."""
-        self.page.locator(self.SIDEBAR_AUDIT_LOG).click()
+    def navigate_to_platform_terminology(self) -> None:
+        """Navigate to Platform Terminology section."""
+        self.page.locator(self.SIDEBAR_PLATFORM_TERMINOLOGY).click()
 
-    def navigate_to_system(self) -> None:
-        """Navigate to System settings section."""
-        self.page.locator(self.SIDEBAR_SYSTEM).click()
+    def navigate_to_report_baseline(self) -> None:
+        """Navigate to Report Baseline section."""
+        self.page.locator(self.SIDEBAR_REPORT_BASELINE).click()
 
-    def navigate_to_licensing(self) -> None:
-        """Navigate to Licensing section."""
-        self.page.locator(self.SIDEBAR_LICENSING).click()
+    def navigate_to_time_tracking(self) -> None:
+        """Navigate to Time Tracking section."""
+        self.page.locator(self.SIDEBAR_TIME_TRACKING).click()
 
-    def navigate_to_api(self) -> None:
-        """Navigate to API management section."""
-        self.page.locator(self.SIDEBAR_API).click()
+    def navigate_to_user_record_terminology(self) -> None:
+        """Navigate to User Record Terminology section."""
+        self.page.locator(self.SIDEBAR_USER_RECORD_TERMINOLOGY).click()
 
-    # General Settings Actions
-    def set_company_name(self, name: str) -> None:
-        """Set company name in General settings."""
-        self.page.locator(self.GENERAL_COMPANY_NAME).fill(name)
+    # Navigation Methods - SETUP
+    def navigate_to_cities(self) -> None:
+        """Navigate to Cities setup section."""
+        self.page.locator(self.SIDEBAR_CITIES).click()
 
-    def set_timezone(self, timezone: str) -> None:
-        """Set system timezone."""
-        self.page.locator(self.GENERAL_TIMEZONE).select_option(timezone)
+    def navigate_to_customers(self) -> None:
+        """Navigate to Customers setup section."""
+        self.page.locator(self.SIDEBAR_CUSTOMERS).click()
 
-    def set_date_format(self, format: str) -> None:
-        """Set date format."""
-        self.page.locator(self.GENERAL_DATE_FORMAT).select_option(format)
+    def navigate_to_cost_centers(self) -> None:
+        """Navigate to Cost Centers setup section."""
+        self.page.locator(self.SIDEBAR_COST_CENTERS).click()
 
-    # User Management Actions
-    def click_add_user(self) -> None:
-        """Open Add User form/modal."""
-        self.page.locator(self.USERS_ADD_BUTTON).click()
+    def navigate_to_custom_hierarchies(self) -> None:
+        """Navigate to Custom Hierarchies section."""
+        self.page.locator(self.SIDEBAR_CUSTOM_HIERARCHIES).click()
 
-    def search_users(self, query: str) -> None:
-        """Search for users by name or email."""
-        self.page.locator(self.USERS_SEARCH).fill(query)
+    def navigate_to_functional_areas(self) -> None:
+        """Navigate to Functional Areas setup section."""
+        self.page.locator(self.SIDEBAR_FUNCTIONAL_AREAS).click()
+
+    def navigate_to_organization_structures(self) -> None:
+        """Navigate to Organization Structures section."""
+        self.page.locator(self.SIDEBAR_ORGANIZATION_STRUCTURES).click()
+
+    def navigate_to_portfolios(self) -> None:
+        """Navigate to Portfolios setup section."""
+        self.page.locator(self.SIDEBAR_PORTFOLIOS).click()
+
+    def navigate_to_programs(self) -> None:
+        """Navigate to Programs setup section."""
+        self.page.locator(self.SIDEBAR_PROGRAMS).click()
+
+    def navigate_to_regions(self) -> None:
+        """Navigate to Regions setup section."""
+        self.page.locator(self.SIDEBAR_REGIONS).click()
+
+    def navigate_to_theme_groups(self) -> None:
+        """Navigate to Theme Groups setup section."""
+        self.page.locator(self.SIDEBAR_THEME_GROUPS).click()
+
+    def navigate_to_enterprise_insights(self) -> None:
+        """Navigate to Enterprise Insights section."""
+        self.page.locator(self.SIDEBAR_ENTERPRISE_INSIGHTS).click()
+
+    # Navigation Methods - SUPPORT
+    def navigate_to_community(self) -> None:
+        """Navigate to Community support section."""
+        self.page.locator(self.SIDEBAR_COMMUNITY).click()
+
+    def navigate_to_updates(self) -> None:
+        """Navigate to Updates section."""
+        self.page.locator(self.SIDEBAR_UPDATES).click()
+
+    def navigate_to_version(self) -> None:
+        """Navigate to Version information section."""
+        self.page.locator(self.SIDEBAR_VERSION).click()
+
+    # Generic Action Methods - Work across different admin sections
+    def click_add_button(self) -> None:
+        """Click the Add/Create/New button in current section."""
+        self.page.locator(self.GENERIC_ADD_BUTTON).first.click()
+
+    def search_in_section(self, query: str) -> None:
+        """Search within the current section."""
+        search_input = self.page.locator(self.GENERIC_SEARCH).first
+        search_input.fill(query)
         self.page.keyboard.press("Enter")
 
-    def get_users_count(self) -> int:
-        """Get the number of users in the table."""
-        return self.page.locator(self.USERS_ROW).count()
+    def get_table_row_count(self) -> int:
+        """Get the number of rows in the current table/grid."""
+        return self.page.locator(self.GENERIC_TABLE_ROW).count()
 
-    def create_user(self, first_name: str, last_name: str, email: str, role: str) -> None:
-        """Create a new user with basic information."""
-        self.click_add_user()
-        self.page.locator(self.USER_FIRST_NAME).fill(first_name)
-        self.page.locator(self.USER_LAST_NAME).fill(last_name)
-        self.page.locator(self.USER_EMAIL).fill(email)
-        self.page.locator(self.USER_ROLE).select_option(role)
-        self.page.locator(self.USER_SAVE_BUTTON).click()
+    def click_edit_in_row(self, row_identifier: str) -> None:
+        """Click edit button in a table row containing specific text."""
+        row = self.page.locator(f"tr:has-text('{row_identifier}')")
+        row.locator(self.GENERIC_EDIT_BUTTON).first.click()
 
-    def edit_user_by_email(self, email: str) -> None:
-        """Click edit button for a user with specific email."""
-        row = self.page.locator(f"tr:has-text('{email}')")
-        row.locator(self.USER_EDIT_BUTTON).click()
-
-    def delete_user_by_email(self, email: str, confirm: bool = True) -> None:
-        """Delete a user by email with optional confirmation."""
-        row = self.page.locator(f"tr:has-text('{email}')")
-        row.locator(self.USER_DELETE_BUTTON).click()
+    def click_delete_in_row(self, row_identifier: str, confirm: bool = True) -> None:
+        """Click delete button in a table row and optionally confirm."""
+        row = self.page.locator(f"tr:has-text('{row_identifier}')")
+        row.locator(self.GENERIC_DELETE_BUTTON).first.click()
         if confirm:
             self.confirm_action()
 
-    # Team Management Actions
-    def click_add_team(self) -> None:
-        """Open Add Team form/modal."""
-        self.page.locator(self.TEAMS_ADD_BUTTON).click()
+    def export_data(self) -> None:
+        """Click export button in current section."""
+        self.page.locator(self.GENERIC_EXPORT).first.click()
 
-    def search_teams(self, query: str) -> None:
-        """Search for teams by name."""
-        self.page.locator(self.TEAMS_SEARCH).fill(query)
-        self.page.keyboard.press("Enter")
+    def fill_form_input(self, label_or_placeholder: str, value: str) -> None:
+        """Fill a form input by its label or placeholder text."""
+        input_field = self.page.locator(
+            f"input[placeholder*='{label_or_placeholder}' i], "
+            f"input[aria-label*='{label_or_placeholder}' i]"
+        ).first
+        input_field.fill(value)
 
-    def get_teams_count(self) -> int:
-        """Get the number of teams in the table."""
-        return self.page.locator(self.TEAMS_ROW).count()
+    def select_dropdown_option(self, label: str, option: str) -> None:
+        """Select an option from a dropdown."""
+        dropdown = self.page.locator(f"select[aria-label*='{label}' i]").first
+        dropdown.select_option(option)
 
-    # Role Management Actions
-    def click_add_role(self) -> None:
-        """Open Add Role form/modal."""
-        self.page.locator(self.ROLES_ADD_BUTTON).click()
+    def toggle_checkbox(self, label: str, checked: bool = True) -> None:
+        """Toggle a checkbox by its label."""
+        checkbox = self.page.locator(
+            f"input[type='checkbox'][aria-label*='{label}' i]"
+        ).first
+        if checked:
+            checkbox.check()
+        else:
+            checkbox.uncheck()
 
-    def search_roles(self, query: str) -> None:
-        """Search for roles by name."""
-        self.page.locator(self.ROLES_SEARCH).fill(query)
-        self.page.keyboard.press("Enter")
+    def save_modal_form(self) -> None:
+        """Click save/submit button in modal dialog."""
+        self.page.locator(self.GENERIC_MODAL_SAVE).first.click()
 
-    # Integration Actions
-    def click_add_integration(self) -> None:
-        """Open Add Integration form/modal."""
-        self.page.locator(self.INTEGRATIONS_ADD_BUTTON).click()
-
-    def enable_integration(self, integration_name: str) -> None:
-        """Enable an integration by name."""
-        card = self.page.locator(f"{self.INTEGRATION_CARD}:has-text('{integration_name}')")
-        card.locator(self.INTEGRATION_ENABLE_TOGGLE).check()
-
-    def configure_integration(self, integration_name: str) -> None:
-        """Open configuration for specific integration."""
-        card = self.page.locator(f"{self.INTEGRATION_CARD}:has-text('{integration_name}')")
-        card.locator(self.INTEGRATION_CONFIGURE_BUTTON).click()
-
-    def test_integration(self, integration_name: str) -> None:
-        """Test connection for specific integration."""
-        card = self.page.locator(f"{self.INTEGRATION_CARD}:has-text('{integration_name}')")
-        card.locator(self.INTEGRATION_TEST_BUTTON).click()
-
-    # Connector Actions
-    def click_add_connector(self) -> None:
-        """Open Add Connector form/modal."""
-        self.page.locator(self.CONNECTORS_ADD_BUTTON).click()
-
-    def configure_connector(self, connector_type: str, url: str, username: str, password: str) -> None:
-        """Configure a new connector with credentials."""
-        self.page.locator(self.CONNECTOR_TYPE_SELECT).select_option(connector_type)
-        self.page.locator(self.CONNECTOR_URL).fill(url)
-        self.page.locator(self.CONNECTOR_USERNAME).fill(username)
-        self.page.locator(self.CONNECTOR_PASSWORD).fill(password)
-
-    # Custom Fields Actions
-    def click_add_custom_field(self) -> None:
-        """Open Add Custom Field form/modal."""
-        self.page.locator(self.CUSTOM_FIELDS_ADD_BUTTON).click()
-
-    def create_custom_field(self, name: str, field_type: str, entity: str) -> None:
-        """Create a new custom field."""
-        self.click_add_custom_field()
-        self.page.locator(self.CUSTOM_FIELD_NAME).fill(name)
-        self.page.locator(self.CUSTOM_FIELD_TYPE).select_option(field_type)
-        self.page.locator(self.CUSTOM_FIELD_ENTITY).select_option(entity)
-        self.page.locator(self.SAVE_BUTTON).click()
-
-    # Email Configuration Actions
-    def configure_smtp(self, host: str, port: str, username: str, password: str, from_address: str) -> None:
-        """Configure SMTP email settings."""
-        self.page.locator(self.EMAIL_SMTP_HOST).fill(host)
-        self.page.locator(self.EMAIL_SMTP_PORT).fill(port)
-        self.page.locator(self.EMAIL_USERNAME).fill(username)
-        self.page.locator(self.EMAIL_PASSWORD).fill(password)
-        self.page.locator(self.EMAIL_FROM_ADDRESS).fill(from_address)
-
-    def test_email_configuration(self) -> None:
-        """Send test email to verify configuration."""
-        self.page.locator(self.EMAIL_TEST_BUTTON).click()
-
-    # Security Actions
-    def enable_mfa(self) -> None:
-        """Enable multi-factor authentication."""
-        self.page.locator(self.SECURITY_MFA_ENABLE).check()
-
-    def enable_sso(self) -> None:
-        """Enable single sign-on."""
-        self.page.locator(self.SECURITY_SSO_ENABLE).check()
-
-    def set_session_timeout(self, minutes: str) -> None:
-        """Set session timeout in minutes."""
-        self.page.locator(self.SECURITY_SESSION_TIMEOUT).fill(minutes)
-
-    # Audit Log Actions
-    def search_audit_log(self, query: str) -> None:
-        """Search audit log entries."""
-        self.page.locator(self.AUDIT_LOG_SEARCH).fill(query)
-        self.page.keyboard.press("Enter")
-
-    def filter_audit_log_by_date(self, from_date: str, to_date: str) -> None:
-        """Filter audit log by date range."""
-        self.page.locator(self.AUDIT_LOG_DATE_FROM).fill(from_date)
-        self.page.locator(self.AUDIT_LOG_DATE_TO).fill(to_date)
-
-    def export_audit_log(self) -> None:
-        """Export audit log to file."""
-        self.page.locator(self.AUDIT_LOG_EXPORT).click()
-
-    # System Actions
-    def clear_cache(self) -> None:
-        """Clear system cache."""
-        self.page.locator(self.SYSTEM_CLEAR_CACHE).click()
-
-    def enable_maintenance_mode(self) -> None:
-        """Enable maintenance mode."""
-        self.page.locator(self.SYSTEM_MAINTENANCE_MODE).check()
-
-    def get_system_version(self) -> str:
-        """Get system version."""
-        return self.page.locator(self.SYSTEM_VERSION).inner_text()
-
-    # Licensing Actions
-    def upload_license(self, license_key: str) -> None:
-        """Upload/paste license key."""
-        self.page.locator(self.LICENSE_KEY).fill(license_key)
-        self.page.locator(self.LICENSE_VALIDATE_BUTTON).click()
-
-    def get_license_status(self) -> str:
-        """Get license status."""
-        return self.page.locator(self.LICENSE_STATUS).inner_text()
-
-    # API Management Actions
-    def click_generate_api_key(self) -> None:
-        """Open Generate API Key form/modal."""
-        self.page.locator(self.API_ADD_KEY_BUTTON).click()
-
-    def create_api_key(self, name: str) -> str:
-        """Create a new API key and return its value."""
-        self.click_generate_api_key()
-        self.page.locator(self.API_KEY_NAME).fill(name)
-        self.page.locator(self.SAVE_BUTTON).click()
-        return self.page.locator(self.API_KEY_VALUE).inner_text()
-
-    def revoke_api_key(self, key_name: str, confirm: bool = True) -> None:
-        """Revoke an API key by name."""
-        row = self.page.locator(f"tr:has-text('{key_name}')")
-        row.locator(self.API_KEY_REVOKE).click()
-        if confirm:
-            self.confirm_action()
+    def cancel_modal_form(self) -> None:
+        """Click cancel button in modal dialog."""
+        self.page.locator(self.GENERIC_MODAL_CANCEL).first.click()
 
     # Common Actions
     def save_changes(self) -> None:
