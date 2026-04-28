@@ -6,44 +6,26 @@ and how different pages relate to each other.
 """
 import pytest
 from playwright.sync_api import Page
-from pages import LoginPage, HomePage, EpicGridPage, StoryGridPage
+from pages import HomePage, EpicGridPage, StoryGridPage
 
 
 class TestNavigationHierarchy:
     """Test suite demonstrating navigation between pages using the POM hierarchy."""
 
     @pytest.fixture(autouse=True)
-    def setup(self, page: Page):
-        """Login before each test and handle cookies + alert banner."""
-        login_page = LoginPage(page)
-        login_page.open()
-        
-        # Accept cookies if present
-        login_page.accept_cookies()
-        
-        login_page.login(
-            username="user@automation.test",
-            password="P@ssw0rd"
-        )
-        
-        # After login, dismiss alert banner if present
-        home_page = HomePage(page)
-        home_page.wait_for_load()
-        if page.locator(home_page.ALERT_BANNER).count() > 0:
-            home_page.dismiss_alert_banner()
-        
+    def setup(self, authenticated_page: Page):
+        """Use authenticated page with cookies and alerts already handled."""
+        self.page = authenticated_page
         yield
 
-    def test_alert_banner_on_home_page(self, page: Page):
-        """HomePage specific functionality for alert banner."""
+    def test_home_page_content_visible(self, page: Page):
+        """HomePage sections are visible after authentication."""
         home_page = HomePage(page)
         home_page.expect_home_sections_visible()
         
-        # HomePage specific method
-        if page.locator(home_page.ALERT_BANNER).count() > 0:
-            alert_text = home_page.get_alert_message()
-            print(f"Alert: {alert_text}")
-            home_page.dismiss_alert_banner()
+        # Verify no alert banner is present (already dismissed by fixture)
+        assert page.locator(home_page.ALERT_BANNER).count() == 0, \
+            "Alert banner should be dismissed by authentication fixture"
 
 
 class TestPageObjectInheritance:

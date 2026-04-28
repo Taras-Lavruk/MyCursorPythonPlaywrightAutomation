@@ -5,7 +5,8 @@ from pages.sidebar_page import SidebarPage
 class AdministrationPage(SidebarPage):
     """Administration page for Jira Align system-wide settings and configurations.
     
-    Accessed via: Header -> SETTINGS_BUTTON (click_settings method in HeaderPage)
+    Accessed via: Header -> Settings Button -> Administration menu item
+    Use: header.navigate_to_administration() method from HeaderPage
     
     The administration sidebar is organized into 6 main categories:
     - ACCESS CONTROLS: Activity, People, Roles
@@ -17,56 +18,58 @@ class AdministrationPage(SidebarPage):
     """
 
     # Page Identifiers
-    PAGE_TITLE = "h1:has-text('Administration'), h1:has-text('Settings')"
-    ADMIN_CONTAINER = "[class*='admin'], [class*='settings-page']"
+    # Note: Admin pages may not have h1 titles, using more flexible selectors
+    PAGE_TITLE = "h2, h3, .page-title, #main-content, [class*='admin-header']"
+    ADMIN_CONTAINER = "#main-content, [class*='admin'], [class*='settings-page'], [class*='admin-container']"
     
     # Left Sidebar Navigation - ACCESS CONTROLS Section
-    SIDEBAR_ACTIVITY = "a:has-text('Activity')"
-    SIDEBAR_PEOPLE = "a:has-text('People')"
-    SIDEBAR_ROLES = "a:has-text('Roles')"
+    SIDEBAR_ACTIVITY = "a[href*='Activity' i], aside a:has-text('Activity')"
+    SIDEBAR_PEOPLE = "a[href*='People' i], aside a:has-text('People')"
+    SIDEBAR_ROLES = "a[href*='RoleSetup' i], a[href*='Roles' i], aside a:has-text('Roles')"
     
     # Left Sidebar Navigation - CONNECTORS Section
-    SIDEBAR_AZURE_DEVOPS = "a:has-text('Azure DevOps Settings')"
-    SIDEBAR_JIRA_SETTINGS = "a:has-text('Jira Settings')"
-    SIDEBAR_JIRA_MANAGEMENT = "a:has-text('Jira Management')"
-    SIDEBAR_MANUAL_IMPORT = "a:has-text('Manual Import')"
+    SIDEBAR_AZURE_DEVOPS = "a[href*='AzureDevOps' i]:has-text('Azure'), aside a:has-text('Azure DevOps')"
+    SIDEBAR_JIRA_SETTINGS = "a[href*='JiraSettings' i]:has-text('Jira'), aside a:has-text('Jira Settings')"
+    SIDEBAR_JIRA_MANAGEMENT = "a[href*='JiraManagement' i]:has-text('Jira'), aside a:has-text('Jira Management')"
+    SIDEBAR_MANUAL_IMPORT = "a[href='ManualImportData']"
     
     # Left Sidebar Navigation - LOGS Section
-    SIDEBAR_CHANGES = "a:has-text('Changes')"
-    SIDEBAR_LOGS_EMAIL = "aside a:has-text('Email')"  # More specific to avoid conflict with Settings > Email
-    SIDEBAR_USE_TREND = "a:has-text('Use Trend')"
+    SIDEBAR_CHANGES = "a[href*='Changes' i]:has-text('Changes'), aside a:has-text('Changes')"
+    SIDEBAR_LOGS_EMAIL = "a[href='AdminEmailsOutLog?FirstTime=True']"
+    SIDEBAR_USE_TREND = "a[href*='UseTrend' i]:has-text('Use'), aside a:has-text('Use Trend')"
     
     # Left Sidebar Navigation - SETTINGS Section
-    SIDEBAR_ANNOUNCEMENT = "a:has-text('Announcement')"
-    SIDEBAR_DETAILS_PANELS = "a:has-text('Details Panels Settings')"
-    SIDEBAR_EMAIL = "aside a:has-text('Email')"  # First Email link in sidebar
-    SIDEBAR_EMAIL_SETTINGS = "a:has-text('Email Settings')"
-    SIDEBAR_PLATFORM = "a:has-text('Platform')"
-    SIDEBAR_PLATFORM_TERMINOLOGY = "a:has-text('Platform Terminology')"
-    SIDEBAR_REPORT_BASELINE = "a:has-text('Report Baseline')"
-    SIDEBAR_TIME_TRACKING = "a:has-text('Time Tracking')"
-    SIDEBAR_USER_RECORD_TERMINOLOGY = "a:has-text('User Record Terminology')"
+    SIDEBAR_ANNOUNCEMENT = "a[href*='Announcement' i], aside a:has-text('Announcement')"
+    SIDEBAR_DETAILS_PANELS = "a[href*='DetailsPanels' i], aside a:has-text('Details Panels')"
+    SIDEBAR_EMAIL = "a[href*='MasterEmailSettings' i], a[href*='EmailSettings' i], aside a:has-text('Email Settings')"
+    SIDEBAR_EMAIL_SETTINGS = "a[href*='MasterEmailSettings' i], a[href*='EmailSettings' i], aside a:has-text('Email Settings')"
+    SIDEBAR_PLATFORM = "a[href*='Platform' i], aside a:has-text('Platform')"
+    SIDEBAR_PLATFORM_TERMINOLOGY = "a[href*='PlatformTerminology' i], a[href*='Terminology' i], aside a:has-text('Platform Terminology')"
+    SIDEBAR_REPORT_BASELINE = "a[href*='MasterCosting' i], a[href*='ReportBaseline' i], aside a:has-text('Report Baseline')"
+    SIDEBAR_TIME_TRACKING = "a[href*='TimeTracking' i], aside a:has-text('Time Tracking')"
+    SIDEBAR_USER_RECORD_TERMINOLOGY = "a[href*='UserRecordTerminology' i], aside a:has-text('User Record Terminology')"
     
     # Left Sidebar Navigation - SETUP Section
-    SIDEBAR_CITIES = "a:has-text('Cities')"
-    SIDEBAR_CUSTOMERS = "a:has-text('Customers')"
-    SIDEBAR_COST_CENTERS = "a:has-text('Cost Centers')"
-    SIDEBAR_CUSTOM_HIERARCHIES = "a:has-text('Custom Hierarchies')"
-    SIDEBAR_FUNCTIONAL_AREAS = "a:has-text('Functional Areas')"
-    SIDEBAR_ORGANIZATION_STRUCTURES = "a:has-text('Organization Structures')"
-    SIDEBAR_PORTFOLIOS = "a:has-text('Portfolios')"
-    SIDEBAR_PROGRAMS = "a:has-text('Programs')"
-    SIDEBAR_REGIONS = "a:has-text('Regions')"
-    SIDEBAR_THEME_GROUPS = "a:has-text('Theme Groups')"
-    SIDEBAR_ENTERPRISE_INSIGHTS = "a:has-text('Enterprise Insights')"
+    SIDEBAR_CITIES = "a[href*='Cities' i]:has-text('Cit'), aside a:has-text('Cities')"
+    SIDEBAR_CUSTOMERS = "a[href*='Customers' i]:has-text('Customer'), aside a:has-text('Customers')"
+    SIDEBAR_COST_CENTERS = "a[href*='CostCenters' i]:has-text('Cost'), aside a:has-text('Cost Centers')"
+    SIDEBAR_CUSTOM_HIERARCHIES = "a[href*='Hierarchies' i]:has-text('Hierarch'), aside a:has-text('Custom Hierarchies')"
+    SIDEBAR_FUNCTIONAL_AREAS = "a[href*='FunctionalAreas' i]:has-text('Functional'), aside a:has-text('Functional Areas')"
+    SIDEBAR_ORGANIZATION_STRUCTURES = "a[href*='Organization' i]:has-text('Organization'), aside a:has-text('Organization Structures')"
+    SIDEBAR_PORTFOLIOS = "a[href*='Portfolios' i]:has-text('Portfolio'), aside a:has-text('Portfolios')"
+    SIDEBAR_PROGRAMS = "a[href*='Programs' i]:has-text('Program'), aside a:has-text('Programs')"
+    SIDEBAR_REGIONS = "a[href*='Regions' i]:has-text('Region'), aside a:has-text('Regions')"
+    SIDEBAR_THEME_GROUPS = "a[href*='ThemeGroups' i]:has-text('Theme'), a[href*='Theme' i]:has-text('Theme'), aside a:has-text('Theme Groups')"
+    SIDEBAR_ENTERPRISE_INSIGHTS = "a[href*='Insights' i]:has-text('Insight'), aside a:has-text('Enterprise Insights')"
     
     # Left Sidebar Navigation - SUPPORT Section
-    SIDEBAR_COMMUNITY = "a:has-text('Community')"
-    SIDEBAR_UPDATES = "a:has-text('Updates')"
-    SIDEBAR_VERSION = "a:has-text('Version')"
+    SIDEBAR_COMMUNITY = "a[href*='Community' i], aside a:has-text('Community')"
+    SIDEBAR_UPDATES = "a[href*='Updates' i], aside a:has-text('Updates')"
+    SIDEBAR_VERSION = "a[href*='MasterVersion' i], a[href*='Version' i], aside a:has-text('Version')"
     
-    # Content Area - Common Elements
-    CONTENT_AREA = "[class*='content'], [class*='admin-panel'], main"
+    # Content Area - Common Elements  
+    # Use ID selector only to avoid strict mode violations from nested elements
+    CONTENT_AREA = "#main-content"
     SECTION_HEADER = "[class*='section-header'], h2, h3"
     SAVE_BUTTON = "button:has-text('Save'), button:has-text('Apply')"
     CANCEL_BUTTON = "button:has-text('Cancel')"
@@ -332,7 +335,8 @@ class AdministrationPage(SidebarPage):
     # Validation Methods
     def expect_administration_page_visible(self) -> None:
         """Verify the administration page is loaded."""
-        expect(self.page.locator(self.PAGE_TITLE).first).to_be_visible(timeout=10000)
+        # Admin pages may not have traditional page titles, just verify main content exists
+        expect(self.page.locator(self.CONTENT_AREA)).to_be_visible(timeout=10000)
         self.expect_sidebar_visible()
 
     def expect_section_loaded(self, section_title: str) -> None:

@@ -1,0 +1,170 @@
+---
+description: Standard patterns for test authentication and session setup
+alwaysApply: true
+---
+
+# Test Authentication Pattern
+
+## Overview
+
+All E2E tests requiring authentication MUST use the shared `authenticated_page` fixture from `tests/conftest.py`. This ensures consistent behavior across all tests.
+
+## Automatic Session Setup
+
+The `authenticated_page` fixture automatically handles:
+1. **Cookie Acceptance** - Dismisses cookie consent banners before login
+2. **User Authentication** - Logs in using credentials from `.env`
+3. **Alert Banner Dismissal** - Dismisses the red license warning banner after login
+4. **Session Validation** - Verifies successful authentication
+
+## Usage Pattern
+
+### For New Test Files
+
+Always use the `authenticated_page` fixture for tests requiring authentication:
+
+```python
+import pytest
+from playwright.sync_api import Page
+from pages import HomePage, HeaderPage
+
+@pytest.mark.e2e
+class TestFeatureName:
+    """Test suite for feature."""
+    
+    @pytest.fixture(autouse=True)
+    def setup(self, authenticated_page: Page):
+        """Use authenticated session with cookies/alerts handled."""
+        self.page = authenticated_page
+        yield
+    
+    def test_something(self, page: Page):
+        """Your test here - already authenticated."""
+        home = HomePage(page)
+        home.expect_home_sections_visible()
+```
+
+### Alternative: Direct Usage
+
+For simpler tests without additional setup:
+
+```python
+def test_feature(authenticated_page: Page):
+    """Test with direct fixture usage."""
+    home = HomePage(authenticated_page)
+    # Test code here
+```
+
+## Available Fixtures
+
+### `authenticated_page` (Recommended)
+- **Purpose**: Full authentication with cookie/alert handling
+- **Use when**: Any test needs authenticated access
+- **Provides**: Fully set up page ready for testing
+
+### `logged_in_page`
+- **Purpose**: Same as `authenticated_page` (alias for compatibility)
+- **Use when**: Maintaining backward compatibility
+- **Provides**: Fully set up page ready for testing
+
+### `login_page`
+- **Purpose**: Testing login functionality itself
+- **Use when**: Testing login, logout, or authentication flows
+- **Provides**: LoginPage instance (not authenticated)
+
+## DO NOT Create Custom Authentication Setup
+
+❌ **BAD - Don't do this:**
+```python
+@pytest.fixture(autouse=True)
+def setup(self, page: Page):
+    """Custom login setup."""
+    login = LoginPage(page)
+    login.open()
+    login.accept_cookies()  # DON'T DUPLICATE
+    login.login("user", "pass")
+    # Custom setup code...
+```
+
+✅ **GOOD - Use shared fixture:**
+```python
+@pytest.fixture(autouse=True)
+def setup(self, authenticated_page: Page):
+    """Use shared authentication."""
+    self.page = authenticated_page
+    # Add any additional setup here
+    yield
+```
+
+## When NOT to Use authenticated_page
+
+**Do not use** for tests that:
+- Test the login page itself (`test_login.py`)
+- Test login functionality (`test_login_page_structure.py`)
+- Test unauthenticated pages
+- Test API endpoints that don't require UI authentication
+
+## Implementation Details
+
+The fixture is defined in `tests/conftest.py`:
+
+```python
+@pytest.fixture
+def authenticated_page(page: Page) -> Page:
+    """Provides authenticated page with cookies/alerts handled."""
+    # 1. Accept cookies
+    # 2. Login
+    # 3. Dismiss alert banner
+    # 4. Return ready page
+```
+
+## Benefits
+
+- **Consistency**: All tests start from the same clean state
+- **DRY**: No duplicate authentication code
+- **Maintainability**: Single source of truth for setup
+- **Reliability**: Handles all common pre-test requirements
+- **Future-proof**: New requirements added automatically to all tests
+
+## Migration Guide
+
+If updating existing tests:
+
+1. Replace custom authentication fixtures with `authenticated_page`
+2. Remove duplicate cookie acceptance code
+3. Remove duplicate alert dismissal code
+4. Keep only test-specific setup logic
+
+**Before:**
+```python
+@pytest.fixture(autouse=True)
+def setup(self, page: Page):
+    login = LoginPage(page)
+    login.open()
+    login.accept_cookies()
+    login.login("user", "pass")
+    home = HomePage(page)
+    home.dismiss_alert_banner()
+    # Navigate to specific page for tests
+    header = HeaderPage(page)
+    header.click_settings()
+    yield
+```
+
+**After:**
+```python
+@pytest.fixture(autouse=True)
+def setup(self, authenticated_page: Page):
+    # Navigate to specific page for tests
+    header = HeaderPage(authenticated_page)
+    header.click_settings()
+    yield authenticated_page
+```
+
+## Summary
+
+✅ Always use `authenticated_page` for authenticated tests
+✅ Let the fixture handle cookies, login, and alerts
+✅ Add only test-specific setup in your fixtures
+❌ Never duplicate authentication logic
+❌ Never manually handle cookies or alerts in tests

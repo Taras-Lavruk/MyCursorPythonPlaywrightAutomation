@@ -25,8 +25,11 @@ class HeaderPage(BasePage):
     SEARCH_BUTTON = "button[aria-label*='search' i], header button[title*='search' i]"
     NOTIFICATIONS_BUTTON = "button[aria-label*='notification' i], header button[title*='notification' i]"
     HELP_BUTTON = "button[aria-label*='help' i], header button[title*='help' i]"
-    SETTINGS_BUTTON = "button[aria-label*='setting' i], header button[title*='setting' i]"
-    PROFILE_BUTTON = "button:has-text('Profile')"
+    SETTINGS_BUTTON = "button[aria-label*='setting' i], header button[title*='setting' i], button:has-text('Settings'), [data-testid*='settings' i], [data-test-id*='settings' i], a[href*='admin' i], header button:has([class*='gear' i]), header button:has([class*='cog' i])"
+    PROFILE_BUTTON = "button:has-text('Profile'), header button:last-child, [data-testid*='profile' i]"
+    
+    # Settings Dropdown Menu Items  
+    SETTINGS_MENU_ADMINISTRATION = "a:has-text('Administration'), a:has-text('Admin Settings'), a:has-text('Admin'), a[href*='admin' i], a[href*='administration' i], button:has-text('Administration'), [role='menuitem']:has-text('Administration'), [role='menuitem']:has-text('Admin')"
     
     # Profile Dropdown Menu Items
     PROFILE_MENU_ABOUT = "a:has-text('About')"
@@ -132,8 +135,50 @@ class HeaderPage(BasePage):
         self.page.locator(self.HELP_BUTTON).click()
 
     def click_settings(self) -> None:
-        """Open settings menu."""
+        """Open settings menu/dropdown."""
         self.page.locator(self.SETTINGS_BUTTON).click()
+
+    def navigate_to_administration(self) -> None:
+        """Navigate to Administration page via settings menu or direct URL."""
+        # Strategy 1: Try clicking settings button and menu item
+        try:
+            settings_button = self.page.locator(self.SETTINGS_BUTTON)
+            if settings_button.count() > 0 and settings_button.first.is_visible(timeout=3000):
+                settings_button.first.click()
+                self.page.wait_for_timeout(1000)  # Wait for dropdown to appear
+                
+                # Look for administration menu item
+                admin_link = self.page.locator(self.SETTINGS_MENU_ADMINISTRATION)
+                if admin_link.count() > 0 and admin_link.first.is_visible(timeout=3000):
+                    admin_link.first.click()
+                    self.page.wait_for_load_state("domcontentloaded", timeout=10000)
+                    return
+        except Exception as e:
+            print(f"Settings button navigation failed: {e}")
+        
+        # Strategy 2: Try direct URL navigation
+        try:
+            from config.settings import settings
+            admin_url = f"{settings.BASE_URL.rstrip('/')}/administration"
+            print(f"Trying direct navigation to: {admin_url}")
+            self.page.goto(admin_url)
+            self.page.wait_for_load_state("domcontentloaded", timeout=10000)
+            return
+        except Exception as e:
+            print(f"Direct URL navigation failed: {e}")
+        
+        # Strategy 3: Look for any admin link visible on current page
+        try:
+            admin_links = self.page.locator("a[href*='admin' i], a:has-text('Administration')")
+            if admin_links.count() > 0:
+                print(f"Found {admin_links.count()} admin links on page")
+                admin_links.first.click()
+                self.page.wait_for_load_state("domcontentloaded", timeout=10000)
+                return
+        except Exception as e:
+            print(f"Admin link search failed: {e}")
+        
+        raise Exception("Failed to navigate to Administration page using all strategies")
 
     # Profile Menu Actions
     def open_profile_menu(self) -> None:

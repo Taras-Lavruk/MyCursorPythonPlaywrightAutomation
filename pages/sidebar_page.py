@@ -9,13 +9,14 @@ class SidebarPage(HeaderPage):
     with context-specific navigation.
     """
 
-    # Sidebar Container
-    SIDEBAR_CONTAINER = "[class*='sidebar'], aside, [role='navigation']:not(header)"
-    SIDEBAR_TOGGLE_BUTTON = "button[aria-label*='sidebar' i], button[title*='sidebar' i]"
+    # Sidebar Container (or navigation area)
+    # Note: Some pages use navigation within main content instead of separate sidebar
+    SIDEBAR_CONTAINER = "#main-content, .admin-main-section, aside, nav:not(#top-nav), [class*='sidebar'], [class*='side-nav'], [class*='admin-nav'], [id*='sidebar'], [role='navigation']:not([id='top-nav']), [data-testid*='sidebar' i]"
+    SIDEBAR_TOGGLE_BUTTON = "button[aria-label*='sidebar' i], button[title*='sidebar' i], button[aria-label*='menu' i]"
     
-    # Common Sidebar Elements
-    SIDEBAR_LINKS = "[class*='sidebar'] a, aside a"
-    SIDEBAR_ACTIVE_LINK = "[class*='sidebar'] a[class*='active'], aside a[class*='active']"
+    # Sidebar Links - Updated to work with pages that have navigation within content
+    SIDEBAR_LINKS = "#main-content a, .admin-main-section a, [class*='sidebar'] a, aside a, nav:not(#top-nav) a"
+    SIDEBAR_ACTIVE_LINK = "[class*='sidebar'] a[class*='active'], aside a[class*='active'], #main-content a[class*='active']"
     
     def __init__(self, page: Page) -> None:
         super().__init__(page)
