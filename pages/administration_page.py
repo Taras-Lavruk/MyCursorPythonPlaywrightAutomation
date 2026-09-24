@@ -1,81 +1,89 @@
+"""
+AdministrationPage — Jira Align system-wide settings and configurations.
+
+Access via: HeaderPage.navigate_to_administration()
+
+Sidebar organisation (6 main categories):
+  ACCESS CONTROLS : Activity, People, Roles
+  CONNECTORS      : Azure DevOps, Jira Settings, Jira Management, Manual Import
+  LOGS            : Changes, Email, Use Trend
+  SETTINGS        : Announcement, Details Panels, Email, Platform, Terminology, etc.
+  SETUP           : Cities, Customers, Cost Centers, Portfolios, Programs, Regions, etc.
+  SUPPORT         : Community, Updates, Version
+"""
+
+import logging
+
 from playwright.sync_api import Page, expect
+
 from pages.sidebar_page import SidebarPage
+
+_logger = logging.getLogger(__name__)
 
 
 class AdministrationPage(SidebarPage):
-    """Administration page for Jira Align system-wide settings and configurations.
-    
-    Accessed via: Header -> Settings Button -> Administration menu item
-    Use: header.navigate_to_administration() method from HeaderPage
-    
-    The administration sidebar is organized into 6 main categories:
-    - ACCESS CONTROLS: Activity, People, Roles
-    - CONNECTORS: Azure DevOps, Jira Settings, Jira Management, Manual Import
-    - LOGS: Changes, Email, Use Trend
-    - SETTINGS: Announcement, Details Panels, Email, Platform, Terminology, etc.
-    - SETUP: Cities, Customers, Cost Centers, Portfolios, Programs, Regions, etc.
-    - SUPPORT: Community, Updates, Version
-    """
+    """Page object for the Jira Align Administration section."""
 
-    # Page Identifiers
-    # Note: Admin pages may not have h1 titles, using more flexible selectors
-    PAGE_TITLE = "h2, h3, .page-title, #main-content, [class*='admin-header']"
-    ADMIN_CONTAINER = "#main-content, [class*='admin'], [class*='settings-page'], [class*='admin-container']"
-    
-    # Left Sidebar Navigation - ACCESS CONTROLS Section
-    SIDEBAR_ACTIVITY = "a[href*='Activity' i], aside a:has-text('Activity')"
-    SIDEBAR_PEOPLE = "a[href*='People' i], aside a:has-text('People')"
-    SIDEBAR_ROLES = "a[href*='RoleSetup' i], a[href*='Roles' i], aside a:has-text('Roles')"
-    
-    # Left Sidebar Navigation - CONNECTORS Section
-    SIDEBAR_AZURE_DEVOPS = "a[href*='AzureDevOps' i]:has-text('Azure'), aside a:has-text('Azure DevOps')"
-    SIDEBAR_JIRA_SETTINGS = "a[href*='JiraSettings' i]:has-text('Jira'), aside a:has-text('Jira Settings')"
-    SIDEBAR_JIRA_MANAGEMENT = "a[href*='JiraManagement' i]:has-text('Jira'), aside a:has-text('Jira Management')"
-    SIDEBAR_MANUAL_IMPORT = "a[href='ManualImportData']"
-    
-    # Left Sidebar Navigation - LOGS Section
-    SIDEBAR_CHANGES = "a[href*='Changes' i]:has-text('Changes'), aside a:has-text('Changes')"
-    SIDEBAR_LOGS_EMAIL = "a[href='AdminEmailsOutLog?FirstTime=True']"
-    SIDEBAR_USE_TREND = "a[href*='UseTrend' i]:has-text('Use'), aside a:has-text('Use Trend')"
-    
-    # Left Sidebar Navigation - SETTINGS Section
-    SIDEBAR_ANNOUNCEMENT = "a[href*='Announcement' i], aside a:has-text('Announcement')"
-    SIDEBAR_DETAILS_PANELS = "a[href*='DetailsPanels' i], aside a:has-text('Details Panels')"
-    SIDEBAR_EMAIL = "a[href*='MasterEmailSettings' i], a[href*='EmailSettings' i], aside a:has-text('Email Settings')"
-    SIDEBAR_EMAIL_SETTINGS = "a[href*='MasterEmailSettings' i], a[href*='EmailSettings' i], aside a:has-text('Email Settings')"
-    SIDEBAR_PLATFORM = "a[href*='Platform' i], aside a:has-text('Platform')"
-    SIDEBAR_PLATFORM_TERMINOLOGY = "a[href*='PlatformTerminology' i], a[href*='Terminology' i], aside a:has-text('Platform Terminology')"
-    SIDEBAR_REPORT_BASELINE = "a[href*='MasterCosting' i], a[href*='ReportBaseline' i], aside a:has-text('Report Baseline')"
-    SIDEBAR_TIME_TRACKING = "a[href*='TimeTracking' i], aside a:has-text('Time Tracking')"
-    SIDEBAR_USER_RECORD_TERMINOLOGY = "a[href*='UserRecordTerminology' i], aside a:has-text('User Record Terminology')"
-    
-    # Left Sidebar Navigation - SETUP Section
-    SIDEBAR_CITIES = "a[href*='Cities' i]:has-text('Cit'), aside a:has-text('Cities')"
-    SIDEBAR_CUSTOMERS = "a[href*='Customers' i]:has-text('Customer'), aside a:has-text('Customers')"
-    SIDEBAR_COST_CENTERS = "a[href*='CostCenters' i]:has-text('Cost'), aside a:has-text('Cost Centers')"
-    SIDEBAR_CUSTOM_HIERARCHIES = "a[href*='Hierarchies' i]:has-text('Hierarch'), aside a:has-text('Custom Hierarchies')"
-    SIDEBAR_FUNCTIONAL_AREAS = "a[href*='FunctionalAreas' i]:has-text('Functional'), aside a:has-text('Functional Areas')"
-    SIDEBAR_ORGANIZATION_STRUCTURES = "a[href*='Organization' i]:has-text('Organization'), aside a:has-text('Organization Structures')"
-    SIDEBAR_PORTFOLIOS = "a[href*='Portfolios' i]:has-text('Portfolio'), aside a:has-text('Portfolios')"
-    SIDEBAR_PROGRAMS = "a[href*='Programs' i]:has-text('Program'), aside a:has-text('Programs')"
-    SIDEBAR_REGIONS = "a[href*='Regions' i]:has-text('Region'), aside a:has-text('Regions')"
-    SIDEBAR_THEME_GROUPS = "a[href*='ThemeGroups' i]:has-text('Theme'), a[href*='Theme' i]:has-text('Theme'), aside a:has-text('Theme Groups')"
-    SIDEBAR_ENTERPRISE_INSIGHTS = "a[href*='Insights' i]:has-text('Insight'), aside a:has-text('Enterprise Insights')"
-    
-    # Left Sidebar Navigation - SUPPORT Section
-    SIDEBAR_COMMUNITY = "a[href*='Community' i], aside a:has-text('Community')"
-    SIDEBAR_UPDATES = "a[href*='Updates' i], aside a:has-text('Updates')"
-    SIDEBAR_VERSION = "a[href*='MasterVersion' i], a[href*='Version' i], aside a:has-text('Version')"
-    
-    # Content Area - Common Elements  
-    # Use ID selector only to avoid strict mode violations from nested elements
-    CONTENT_AREA = "#main-content"
+    # ── Page identity ─────────────────────────────────────────────────────────
+    ADMIN_CONTAINER = "#main-content"
+    PAGE_TITLE = "h2, h3, .page-title, [class*='admin-header']"
     SECTION_HEADER = "[class*='section-header'], h2, h3"
+
+    # ── ACCESS CONTROLS ───────────────────────────────────────────────────────
+    # All sidebar locators are scoped to `aside` to avoid matching header/body links.
+    # href-based selectors are preferred; text fallback is used only when href varies.
+    SIDEBAR_ACTIVITY = "aside a[href*='Activity' i]"
+    SIDEBAR_PEOPLE = "aside a[href*='People' i]"
+    SIDEBAR_ROLES = "aside a[href*='RoleSetup' i], aside a[href*='Roles' i]"
+
+    # ── CONNECTORS ────────────────────────────────────────────────────────────
+    SIDEBAR_AZURE_DEVOPS = "aside a[href*='AzureDevOps' i]"
+    SIDEBAR_JIRA_SETTINGS = "aside a[href*='JiraSettings' i]"
+    SIDEBAR_JIRA_MANAGEMENT = "aside a[href*='JiraManagement' i]"
+    # href path may omit the query string in some app versions — match by path stem.
+    SIDEBAR_MANUAL_IMPORT = "aside a[href*='ManualImportData' i], aside a:has-text('Manual Import')"
+
+    # ── LOGS ──────────────────────────────────────────────────────────────────
+    SIDEBAR_CHANGES = "aside a[href*='Changes' i]"
+    # Match the path stem only — the query string (?FirstTime=True) is not stable.
+    SIDEBAR_LOGS_EMAIL = "aside a[href*='AdminEmailsOutLog' i], aside a:has-text('Email')"
+    SIDEBAR_USE_TREND = "aside a[href*='UseTrend' i]"
+
+    # ── SETTINGS ──────────────────────────────────────────────────────────────
+    SIDEBAR_ANNOUNCEMENT = "aside a[href*='Announcement' i]"
+    SIDEBAR_DETAILS_PANELS = "aside a[href*='DetailsPanels' i]"
+    SIDEBAR_EMAIL_SETTINGS = "aside a[href*='MasterEmailSettings' i], aside a[href*='EmailSettings' i]"
+    SIDEBAR_PLATFORM = "aside a[href*='Platform' i]"
+    SIDEBAR_PLATFORM_TERMINOLOGY = "aside a[href*='PlatformTerminology' i], aside a[href*='Terminology' i]"
+    SIDEBAR_REPORT_BASELINE = "aside a[href*='MasterCosting' i], aside a[href*='ReportBaseline' i]"
+    SIDEBAR_TIME_TRACKING = "aside a[href*='TimeTracking' i]"
+    SIDEBAR_USER_RECORD_TERMINOLOGY = "aside a[href*='UserRecordTerminology' i]"
+
+    # ── SETUP ─────────────────────────────────────────────────────────────────
+    SIDEBAR_CITIES = "aside a[href*='Cities' i]"
+    SIDEBAR_CUSTOMERS = "aside a[href*='Customers' i]"
+    SIDEBAR_COST_CENTERS = "aside a[href*='CostCenters' i]"
+    SIDEBAR_CUSTOM_HIERARCHIES = "aside a[href*='Hierarchies' i]"
+    SIDEBAR_FUNCTIONAL_AREAS = "aside a[href*='FunctionalAreas' i]"
+    SIDEBAR_ORGANIZATION_STRUCTURES = "aside a[href*='Organization' i]"
+    SIDEBAR_PORTFOLIOS = "aside a[href*='Portfolios' i]"
+    SIDEBAR_PROGRAMS = "aside a[href*='Programs' i]"
+    SIDEBAR_REGIONS = "aside a[href*='Regions' i]"
+    SIDEBAR_THEME_GROUPS = "aside a[href*='ThemeGroups' i]"
+    SIDEBAR_ENTERPRISE_INSIGHTS = "aside a[href*='Insights' i]"
+
+    # ── SUPPORT ───────────────────────────────────────────────────────────────
+    SIDEBAR_COMMUNITY = "aside a[href*='Community' i]"
+    SIDEBAR_UPDATES = "aside a[href*='Updates' i]"
+    SIDEBAR_VERSION = "aside a[href*='MasterVersion' i], aside a[href*='Version' i]"
+
+    # ── Content area ──────────────────────────────────────────────────────────
+    CONTENT_AREA = "#main-content"
     SAVE_BUTTON = "button:has-text('Save'), button:has-text('Apply')"
     CANCEL_BUTTON = "button:has-text('Cancel')"
     RESET_BUTTON = "button:has-text('Reset')"
-    
-    # Generic Content Area Elements - Reusable across all sections
+
+    # ── Generic reusable elements ─────────────────────────────────────────────
     GENERIC_TABLE = "table, [role='grid']"
     GENERIC_ADD_BUTTON = "button:has-text('Add'), button:has-text('Create'), button:has-text('New')"
     GENERIC_SEARCH = "input[type='search'], input[placeholder*='search' i]"
@@ -84,291 +92,284 @@ class AdministrationPage(SidebarPage):
     GENERIC_TABLE_ROW = "table tbody tr, [role='row']"
     GENERIC_EDIT_BUTTON = "button[title*='edit' i], a[href*='edit']"
     GENERIC_DELETE_BUTTON = "button[title*='delete' i], button[title*='remove' i]"
-    
-    # Generic Modal/Form Elements
+
+    # ── Modals & forms ────────────────────────────────────────────────────────
     GENERIC_MODAL = "[role='dialog'], [class*='modal']"
-    GENERIC_FORM = "form"
-    GENERIC_INPUT = "input[type='text']"
-    GENERIC_SELECT = "select"
-    GENERIC_TEXTAREA = "textarea"
-    GENERIC_CHECKBOX = "input[type='checkbox']"
     GENERIC_MODAL_SAVE = "[role='dialog'] button:has-text('Save'), [role='dialog'] button[type='submit']"
     GENERIC_MODAL_CANCEL = "[role='dialog'] button:has-text('Cancel')"
-    
-    # Confirmation Dialogs
+
+    # ── Confirmation dialogs ──────────────────────────────────────────────────
     CONFIRM_DIALOG = "[role='alertdialog'], [class*='confirm-dialog']"
     CONFIRM_YES_BUTTON = "button:has-text('Yes'), button:has-text('Confirm'), button:has-text('OK')"
     CONFIRM_NO_BUTTON = "button:has-text('No'), button:has-text('Cancel')"
-    
-    # Toast/Alert Messages
+
+    # ── Feedback messages ─────────────────────────────────────────────────────
     SUCCESS_MESSAGE = "[class*='success'], [role='alert']:has-text('success')"
     ERROR_MESSAGE = "[class*='error'], [role='alert']:has-text('error')"
     WARNING_MESSAGE = "[class*='warning'], [role='alert']:has-text('warning')"
-    INFO_MESSAGE = "[class*='info'], [role='alert']:has-text('info')"
 
     def __init__(self, page: Page) -> None:
         super().__init__(page)
 
-    # Navigation Methods - ACCESS CONTROLS
+    # ── Sidebar navigation — ACCESS CONTROLS ─────────────────────────────────
+
     def navigate_to_activity(self) -> None:
-        """Navigate to Activity section."""
-        self.page.locator(self.SIDEBAR_ACTIVITY).click()
+        """Navigate to the Activity section."""
+        self.page.locator(self.SIDEBAR_ACTIVITY).first.click()
 
     def navigate_to_people(self) -> None:
-        """Navigate to People management section."""
-        self.page.locator(self.SIDEBAR_PEOPLE).click()
+        """Navigate to People management."""
+        self.page.locator(self.SIDEBAR_PEOPLE).first.click()
 
     def navigate_to_roles(self) -> None:
-        """Navigate to Roles section."""
-        self.page.locator(self.SIDEBAR_ROLES).click()
+        """Navigate to Roles."""
+        self.page.locator(self.SIDEBAR_ROLES).first.click()
 
-    # Navigation Methods - CONNECTORS
+    # ── Sidebar navigation — CONNECTORS ──────────────────────────────────────
+
     def navigate_to_azure_devops(self) -> None:
-        """Navigate to Azure DevOps Settings section."""
-        self.page.locator(self.SIDEBAR_AZURE_DEVOPS).click()
+        """Navigate to Azure DevOps Settings."""
+        self.page.locator(self.SIDEBAR_AZURE_DEVOPS).first.click()
 
     def navigate_to_jira_settings(self) -> None:
-        """Navigate to Jira Settings section."""
-        self.page.locator(self.SIDEBAR_JIRA_SETTINGS).click()
+        """Navigate to Jira Settings."""
+        self.page.locator(self.SIDEBAR_JIRA_SETTINGS).first.click()
 
     def navigate_to_jira_management(self) -> None:
-        """Navigate to Jira Management section."""
-        self.page.locator(self.SIDEBAR_JIRA_MANAGEMENT).click()
+        """Navigate to Jira Management."""
+        self.page.locator(self.SIDEBAR_JIRA_MANAGEMENT).first.click()
 
     def navigate_to_manual_import(self) -> None:
-        """Navigate to Manual Import section."""
+        """Navigate to Manual Import."""
         self.page.locator(self.SIDEBAR_MANUAL_IMPORT).click()
 
-    # Navigation Methods - LOGS
+    # ── Sidebar navigation — LOGS ─────────────────────────────────────────────
+
     def navigate_to_changes(self) -> None:
-        """Navigate to Changes log section."""
-        self.page.locator(self.SIDEBAR_CHANGES).click()
+        """Navigate to the Changes log."""
+        self.page.locator(self.SIDEBAR_CHANGES).first.click()
 
     def navigate_to_email_logs(self) -> None:
-        """Navigate to Email logs section."""
+        """Navigate to the Email logs."""
         self.page.locator(self.SIDEBAR_LOGS_EMAIL).click()
 
     def navigate_to_use_trend(self) -> None:
-        """Navigate to Use Trend section."""
-        self.page.locator(self.SIDEBAR_USE_TREND).click()
+        """Navigate to the Use Trend report."""
+        self.page.locator(self.SIDEBAR_USE_TREND).first.click()
 
-    # Navigation Methods - SETTINGS
+    # ── Sidebar navigation — SETTINGS ────────────────────────────────────────
+
     def navigate_to_announcement(self) -> None:
-        """Navigate to Announcement settings section."""
-        self.page.locator(self.SIDEBAR_ANNOUNCEMENT).click()
+        """Navigate to Announcement settings."""
+        self.page.locator(self.SIDEBAR_ANNOUNCEMENT).first.click()
 
     def navigate_to_details_panels(self) -> None:
-        """Navigate to Details Panels Settings section."""
-        self.page.locator(self.SIDEBAR_DETAILS_PANELS).click()
-
-    def navigate_to_email(self) -> None:
-        """Navigate to Email settings section."""
-        self.page.locator(self.SIDEBAR_EMAIL).click()
+        """Navigate to Details Panels settings."""
+        self.page.locator(self.SIDEBAR_DETAILS_PANELS).first.click()
 
     def navigate_to_email_settings(self) -> None:
-        """Navigate to Email Settings section."""
-        self.page.locator(self.SIDEBAR_EMAIL_SETTINGS).click()
+        """Navigate to Email settings."""
+        self.page.locator(self.SIDEBAR_EMAIL_SETTINGS).first.click()
 
     def navigate_to_platform(self) -> None:
-        """Navigate to Platform settings section."""
-        self.page.locator(self.SIDEBAR_PLATFORM).click()
+        """Navigate to Platform settings."""
+        self.page.locator(self.SIDEBAR_PLATFORM).first.click()
 
     def navigate_to_platform_terminology(self) -> None:
-        """Navigate to Platform Terminology section."""
-        self.page.locator(self.SIDEBAR_PLATFORM_TERMINOLOGY).click()
+        """Navigate to Platform Terminology."""
+        self.page.locator(self.SIDEBAR_PLATFORM_TERMINOLOGY).first.click()
 
     def navigate_to_report_baseline(self) -> None:
-        """Navigate to Report Baseline section."""
-        self.page.locator(self.SIDEBAR_REPORT_BASELINE).click()
+        """Navigate to Report Baseline."""
+        self.page.locator(self.SIDEBAR_REPORT_BASELINE).first.click()
 
     def navigate_to_time_tracking(self) -> None:
-        """Navigate to Time Tracking section."""
-        self.page.locator(self.SIDEBAR_TIME_TRACKING).click()
+        """Navigate to Time Tracking settings."""
+        self.page.locator(self.SIDEBAR_TIME_TRACKING).first.click()
 
     def navigate_to_user_record_terminology(self) -> None:
-        """Navigate to User Record Terminology section."""
-        self.page.locator(self.SIDEBAR_USER_RECORD_TERMINOLOGY).click()
+        """Navigate to User Record Terminology."""
+        self.page.locator(self.SIDEBAR_USER_RECORD_TERMINOLOGY).first.click()
 
-    # Navigation Methods - SETUP
+    # ── Sidebar navigation — SETUP ────────────────────────────────────────────
+
     def navigate_to_cities(self) -> None:
-        """Navigate to Cities setup section."""
-        self.page.locator(self.SIDEBAR_CITIES).click()
+        """Navigate to Cities setup."""
+        self.page.locator(self.SIDEBAR_CITIES).first.click()
 
     def navigate_to_customers(self) -> None:
-        """Navigate to Customers setup section."""
-        self.page.locator(self.SIDEBAR_CUSTOMERS).click()
+        """Navigate to Customers setup."""
+        self.page.locator(self.SIDEBAR_CUSTOMERS).first.click()
 
     def navigate_to_cost_centers(self) -> None:
-        """Navigate to Cost Centers setup section."""
-        self.page.locator(self.SIDEBAR_COST_CENTERS).click()
+        """Navigate to Cost Centers setup."""
+        self.page.locator(self.SIDEBAR_COST_CENTERS).first.click()
 
     def navigate_to_custom_hierarchies(self) -> None:
-        """Navigate to Custom Hierarchies section."""
-        self.page.locator(self.SIDEBAR_CUSTOM_HIERARCHIES).click()
+        """Navigate to Custom Hierarchies."""
+        self.page.locator(self.SIDEBAR_CUSTOM_HIERARCHIES).first.click()
 
     def navigate_to_functional_areas(self) -> None:
-        """Navigate to Functional Areas setup section."""
-        self.page.locator(self.SIDEBAR_FUNCTIONAL_AREAS).click()
+        """Navigate to Functional Areas setup."""
+        self.page.locator(self.SIDEBAR_FUNCTIONAL_AREAS).first.click()
 
     def navigate_to_organization_structures(self) -> None:
-        """Navigate to Organization Structures section."""
-        self.page.locator(self.SIDEBAR_ORGANIZATION_STRUCTURES).click()
+        """Navigate to Organization Structures."""
+        self.page.locator(self.SIDEBAR_ORGANIZATION_STRUCTURES).first.click()
 
     def navigate_to_portfolios(self) -> None:
-        """Navigate to Portfolios setup section."""
-        self.page.locator(self.SIDEBAR_PORTFOLIOS).click()
+        """Navigate to Portfolios setup."""
+        self.page.locator(self.SIDEBAR_PORTFOLIOS).first.click()
 
     def navigate_to_programs(self) -> None:
-        """Navigate to Programs setup section."""
-        self.page.locator(self.SIDEBAR_PROGRAMS).click()
+        """Navigate to Programs setup."""
+        self.page.locator(self.SIDEBAR_PROGRAMS).first.click()
 
     def navigate_to_regions(self) -> None:
-        """Navigate to Regions setup section."""
-        self.page.locator(self.SIDEBAR_REGIONS).click()
+        """Navigate to Regions setup."""
+        self.page.locator(self.SIDEBAR_REGIONS).first.click()
 
     def navigate_to_theme_groups(self) -> None:
-        """Navigate to Theme Groups setup section."""
-        self.page.locator(self.SIDEBAR_THEME_GROUPS).click()
+        """Navigate to Theme Groups setup."""
+        self.page.locator(self.SIDEBAR_THEME_GROUPS).first.click()
 
     def navigate_to_enterprise_insights(self) -> None:
-        """Navigate to Enterprise Insights section."""
-        self.page.locator(self.SIDEBAR_ENTERPRISE_INSIGHTS).click()
+        """Navigate to Enterprise Insights."""
+        self.page.locator(self.SIDEBAR_ENTERPRISE_INSIGHTS).first.click()
 
-    # Navigation Methods - SUPPORT
+    # ── Sidebar navigation — SUPPORT ─────────────────────────────────────────
+
     def navigate_to_community(self) -> None:
-        """Navigate to Community support section."""
-        self.page.locator(self.SIDEBAR_COMMUNITY).click()
+        """Navigate to Community support."""
+        self.page.locator(self.SIDEBAR_COMMUNITY).first.click()
 
     def navigate_to_updates(self) -> None:
-        """Navigate to Updates section."""
-        self.page.locator(self.SIDEBAR_UPDATES).click()
+        """Navigate to Updates."""
+        self.page.locator(self.SIDEBAR_UPDATES).first.click()
 
     def navigate_to_version(self) -> None:
-        """Navigate to Version information section."""
-        self.page.locator(self.SIDEBAR_VERSION).click()
+        """Navigate to Version information."""
+        self.page.locator(self.SIDEBAR_VERSION).first.click()
 
-    # Generic Action Methods - Work across different admin sections
+    # ── Generic section actions ───────────────────────────────────────────────
+
     def click_add_button(self) -> None:
-        """Click the Add/Create/New button in current section."""
+        """Click the Add / Create / New button in the current section."""
         self.page.locator(self.GENERIC_ADD_BUTTON).first.click()
 
     def search_in_section(self, query: str) -> None:
-        """Search within the current section."""
-        search_input = self.page.locator(self.GENERIC_SEARCH).first
-        search_input.fill(query)
+        """Search within the current admin section."""
+        self.page.locator(self.GENERIC_SEARCH).first.fill(query)
         self.page.keyboard.press("Enter")
 
     def get_table_row_count(self) -> int:
-        """Get the number of rows in the current table/grid."""
+        """Return the number of rows in the current section table."""
         return self.page.locator(self.GENERIC_TABLE_ROW).count()
 
     def click_edit_in_row(self, row_identifier: str) -> None:
-        """Click edit button in a table row containing specific text."""
+        """Click the edit button in the table row containing row_identifier."""
         row = self.page.locator(f"tr:has-text('{row_identifier}')")
         row.locator(self.GENERIC_EDIT_BUTTON).first.click()
 
     def click_delete_in_row(self, row_identifier: str, confirm: bool = True) -> None:
-        """Click delete button in a table row and optionally confirm."""
+        """Click delete in the row matching row_identifier, optionally confirming."""
         row = self.page.locator(f"tr:has-text('{row_identifier}')")
         row.locator(self.GENERIC_DELETE_BUTTON).first.click()
         if confirm:
             self.confirm_action()
 
-    def export_data(self) -> None:
-        """Click export button in current section."""
-        self.page.locator(self.GENERIC_EXPORT).first.click()
-
     def fill_form_input(self, label_or_placeholder: str, value: str) -> None:
-        """Fill a form input by its label or placeholder text."""
-        input_field = self.page.locator(
+        """Fill a form input identified by its label or placeholder."""
+        self.page.locator(
             f"input[placeholder*='{label_or_placeholder}' i], "
             f"input[aria-label*='{label_or_placeholder}' i]"
-        ).first
-        input_field.fill(value)
+        ).first.fill(value)
 
     def select_dropdown_option(self, label: str, option: str) -> None:
-        """Select an option from a dropdown."""
-        dropdown = self.page.locator(f"select[aria-label*='{label}' i]").first
-        dropdown.select_option(option)
+        """Select an option from a <select> element identified by aria-label."""
+        self.page.locator(f"select[aria-label*='{label}' i]").first.select_option(option)
 
-    def toggle_checkbox(self, label: str, checked: bool = True) -> None:
-        """Toggle a checkbox by its label."""
-        checkbox = self.page.locator(
-            f"input[type='checkbox'][aria-label*='{label}' i]"
-        ).first
+    def toggle_checkbox(self, label: str, *, checked: bool = True) -> None:
+        """Check or uncheck a checkbox identified by its aria-label."""
+        cb = self.page.locator(f"input[type='checkbox'][aria-label*='{label}' i]").first
         if checked:
-            checkbox.check()
+            cb.check()
         else:
-            checkbox.uncheck()
+            cb.uncheck()
 
     def save_modal_form(self) -> None:
-        """Click save/submit button in modal dialog."""
+        """Click the save/submit button in the modal dialog."""
         self.page.locator(self.GENERIC_MODAL_SAVE).first.click()
 
     def cancel_modal_form(self) -> None:
-        """Click cancel button in modal dialog."""
+        """Click the cancel button in the modal dialog."""
         self.page.locator(self.GENERIC_MODAL_CANCEL).first.click()
 
-    # Common Actions
     def save_changes(self) -> None:
-        """Save changes in current section."""
+        """Click the Save / Apply button in the current section."""
         self.page.locator(self.SAVE_BUTTON).click()
 
     def cancel_changes(self) -> None:
-        """Cancel changes in current section."""
+        """Click the Cancel button in the current section."""
         self.page.locator(self.CANCEL_BUTTON).click()
 
     def reset_to_defaults(self) -> None:
-        """Reset settings to default values."""
+        """Click the Reset button in the current section."""
         self.page.locator(self.RESET_BUTTON).click()
 
     def confirm_action(self) -> None:
-        """Confirm action in confirmation dialog."""
-        if self.page.locator(self.CONFIRM_DIALOG).count() > 0:
-            self.page.locator(self.CONFIRM_YES_BUTTON).click()
+        """Confirm an action in the confirmation dialog.
+
+        Clicks are scoped inside the dialog to avoid hitting same-text buttons
+        elsewhere on the page (e.g. a form Save button labelled "OK").
+        """
+        dialog = self.page.locator(self.CONFIRM_DIALOG).first
+        if dialog.is_visible(timeout=2000):
+            dialog.locator(self.CONFIRM_YES_BUTTON).first.click()
 
     def cancel_action(self) -> None:
-        """Cancel action in confirmation dialog."""
-        if self.page.locator(self.CONFIRM_DIALOG).count() > 0:
-            self.page.locator(self.CONFIRM_NO_BUTTON).click()
+        """Cancel an action in the confirmation dialog."""
+        dialog = self.page.locator(self.CONFIRM_DIALOG).first
+        if dialog.is_visible(timeout=2000):
+            dialog.locator(self.CONFIRM_NO_BUTTON).first.click()
 
-    # Validation Methods
+    # ── Assertions ────────────────────────────────────────────────────────────
+
     def expect_administration_page_visible(self) -> None:
-        """Verify the administration page is loaded."""
-        # Admin pages may not have traditional page titles, just verify main content exists
+        """Assert the administration page main content is loaded."""
         expect(self.page.locator(self.CONTENT_AREA)).to_be_visible(timeout=10000)
         self.expect_sidebar_visible()
 
     def expect_section_loaded(self, section_title: str) -> None:
-        """Verify a specific section is loaded."""
-        expect(self.page.locator(f"{self.SECTION_HEADER}:has-text('{section_title}')")).to_be_visible()
+        """Assert a specific section heading is visible."""
+        expect(
+            self.page.locator(f"{self.SECTION_HEADER}:has-text('{section_title}')")
+        ).to_be_visible()
 
     def expect_success_message(self) -> None:
-        """Verify success message is displayed."""
+        """Assert a success message is displayed."""
         expect(self.page.locator(self.SUCCESS_MESSAGE).first).to_be_visible()
 
-    def expect_error_message(self) -> None:
-        """Verify error message is displayed."""
+    def expect_error_message_visible(self) -> None:
+        """Assert an error message is displayed."""
         expect(self.page.locator(self.ERROR_MESSAGE).first).to_be_visible()
 
     def is_success_message_visible(self) -> bool:
-        """Check if success message is visible."""
-        return self.page.locator(self.SUCCESS_MESSAGE).count() > 0 and \
-               self.page.locator(self.SUCCESS_MESSAGE).first.is_visible()
+        """Return True if a success message is currently visible."""
+        return self.page.locator(self.SUCCESS_MESSAGE).first.is_visible(timeout=0)
 
     def is_error_message_visible(self) -> bool:
-        """Check if error message is visible."""
-        return self.page.locator(self.ERROR_MESSAGE).count() > 0 and \
-               self.page.locator(self.ERROR_MESSAGE).first.is_visible()
+        """Return True if an error message is currently visible."""
+        return self.page.locator(self.ERROR_MESSAGE).first.is_visible(timeout=0)
 
     def get_error_message_text(self) -> str:
-        """Get error message text."""
+        """Return the error message text, or empty string if none is visible."""
         if self.is_error_message_visible():
             return self.page.locator(self.ERROR_MESSAGE).first.inner_text()
         return ""
 
     def get_success_message_text(self) -> str:
-        """Get success message text."""
+        """Return the success message text, or empty string if none is visible."""
         if self.is_success_message_visible():
             return self.page.locator(self.SUCCESS_MESSAGE).first.inner_text()
         return ""

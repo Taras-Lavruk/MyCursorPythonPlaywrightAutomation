@@ -6,20 +6,22 @@ on:
   pull_request:
     branches: [main, master]
   schedule:
-    - cron: "0 6 * * *"   # daily at 06:00 UTC
+    - cron: "0 6 * * *"   # nightly at 06:00 UTC
 
+# ────────────────────────────────────────────────────────────────────────────
+# Job: lint
+# Runs ruff (linting) and mypy (type checking) before tests.
+# A lint failure blocks the test jobs — no point running tests with broken code.
+# ────────────────────────────────────────────────────────────────────────────
 jobs:
-  test:
+  lint:
+    name: Lint & Type Check
     runs-on: ubuntu-latest
-    timeout-minutes: 30
-
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-        with:
-          persist-credentials: false
-          ssh-strict: false
-        
-      - name: Set up Python
+
+      - name: Set up Python 3.12
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -30,46 +32,171 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Install Playwright browsers
-        run: playwright install --with-deps chromium
+      - name: Ruff — lint
+        run: ruff check .
 
-      - name: Run smoke tests
-        env:
-          BASE_URL: ${{ secrets.BASE_URL }}
-          API_BASE_URL: ${{ secrets.API_BASE_URL }}
-          API_BEARER_TOKEN: ${{ secrets.API_BEARER_TOKEN }}
-          HEADLESS: "true"
-        run: pytest -m smoke --tb=short
+      - name: Mypy — type check
+        run: mypy pages/ config/ utils/ --ignore-missing-imports
 
-      - name: Run full test suite
+# ────────────────────────────────────────────────────────────────────────────
+# Job: smoke
+# Runs the smoke marker on every push/PR — fast gate check (~2 min target).
+# Matrix: Chromium + Firefox + WebKit so cross-browser regressions surface
+# on every PR, not just on the nightly full regression run.
+# ────────────────────────────────────────────────────────────────────────────
+  smoke:
+    name: Smoke Tests (${{ matrix.browser }})
+    needs: lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false          # keep running other browsers when one fails
+      matrix:
+        browser: [chromium, firefox, webkit]
+    env:
+      BASE_URL: ${{ secrets.BASE_URL }}
+      API_BASE_URL: ${{ secrets.API_BASE_URL }}
+      API_BEARER_TOKEN: ${{ secrets.API_BEARER_TOKEN }}
+      TEST_USERNAME: ${{ secrets.TEST_USERNAME }}
+      TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
+      HEADLESS: "true"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install Python dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Install Playwright browser (${{ matrix.browser }})
+        run: playwright install --with-deps ${{ matrix.browser }}
+
+      - name: Run smoke tests (${{ matrix.browser }})
+        run: pytest -m smoke --browser ${{ matrix.browser }} --tb=short -n auto
+
+      - name: Publish step summary
         if: always()
-        env:
-          BASE_URL: ${{ secrets.BASE_URL }}
-          API_BASE_URL: ${{ secrets.API_BASE_URL }}
-          API_BEARER_TOKEN: ${{ secrets.API_BEARER_TOKEN }}
-          HEADLESS: "true"
-        run: pytest --tb=short
+        run: |
+          echo "## Smoke Test Results — ${{ matrix.browser }}" >> $GITHUB_STEP_SUMMARY
+          echo "Branch: \`${{ github.ref_name }}\`  Run: [${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
 
       - name: Upload HTML report
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: playwright-report
+          name: smoke-report-${{ matrix.browser }}
+          path: reports/
+          retention-days: 7
+
+      - name: Upload Allure results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: smoke-allure-${{ matrix.browser }}
+          path: reports/allure-results/
+          retention-days: 7
+
+      - name: Upload traces on failure
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: smoke-traces-${{ matrix.browser }}
+          path: reports/traces/
+          retention-days: 7
+
+# ────────────────────────────────────────────────────────────────────────────
+# Job: regression
+# Full suite — runs on push to main/master AND on the nightly schedule.
+# Uses pytest-xdist (-n auto) for parallelisation across all available CPUs.
+# ────────────────────────────────────────────────────────────────────────────
+  regression:
+    name: Full Regression
+    needs: smoke
+    # Run full regression on main/master pushes and on schedule; skip on PRs
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      BASE_URL: ${{ secrets.BASE_URL }}
+      API_BASE_URL: ${{ secrets.API_BASE_URL }}
+      API_BEARER_TOKEN: ${{ secrets.API_BEARER_TOKEN }}
+      TEST_USERNAME: ${{ secrets.TEST_USERNAME }}
+      TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
+      HEADLESS: "true"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install Python dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Cache Playwright browser binaries
+        uses: actions/cache@v4
+        id: playwright-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-chromium-${{ hashFiles('requirements.txt') }}
+
+      - name: Install Playwright browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: playwright install --with-deps chromium
+
+      - name: Install Playwright system deps (cached browser)
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: playwright install-deps chromium
+
+      - name: Run full test suite (parallel)
+        run: pytest --tb=short -n auto
+
+      - name: Publish step summary
+        if: always()
+        run: |
+          echo "## Regression Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "Branch: \`${{ github.ref_name }}\`  Run: [${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload HTML report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: regression-report
           path: reports/
           retention-days: 14
+
+      - name: Upload Allure results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: regression-allure
+          path: reports/allure-results/
+          retention-days: 14
+
+      - name: Upload traces on failure
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: regression-traces
+          path: reports/traces/
+          retention-days: 7
 
       - name: Upload screenshots on failure
         uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: failure-screenshots
+          name: regression-screenshots
           path: reports/screenshots/
-          retention-days: 7
-
-      - name: Upload videos on failure
-        uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: failure-videos
-          path: reports/videos/
           retention-days: 7

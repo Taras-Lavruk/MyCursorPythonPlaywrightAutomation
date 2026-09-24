@@ -25,8 +25,8 @@ def guest_user() -> UserCredentials:
 def admin_user() -> UserCredentials:
     """Returns admin credentials from env (skip if not configured)."""
     from config.settings import settings
-    if not settings.TEST_USERNAME:
-        pytest.skip("Admin credentials not configured")
+    if not settings.has_credentials:
+        pytest.skip("Admin credentials not configured (TEST_USERNAME / TEST_PASSWORD not set)")
     return UserCredentials(
         username=settings.TEST_USERNAME,
         password=settings.TEST_PASSWORD,

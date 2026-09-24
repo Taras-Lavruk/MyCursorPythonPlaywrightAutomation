@@ -1,48 +1,74 @@
+"""
+SidebarPage — base class for pages that include a left navigation sidebar.
+
+Portfolio rooms, grid pages (Epics, Stories, etc.) and Administration all
+inherit from this class to get sidebar interaction methods.
+"""
+
+import logging
+
 from playwright.sync_api import Page, expect
+
 from pages.header_page import HeaderPage
+
+_logger = logging.getLogger(__name__)
 
 
 class SidebarPage(HeaderPage):
-    """Base class for pages with a left navigation sidebar.
-    
-    Portfolio Room, Grid pages (Epics, Stories, etc.) have left sidebars
-    with context-specific navigation.
-    """
+    """Adds left-sidebar navigation on top of the shared header."""
 
-    # Sidebar Container (or navigation area)
-    # Note: Some pages use navigation within main content instead of separate sidebar
-    SIDEBAR_CONTAINER = "#main-content, .admin-main-section, aside, nav:not(#top-nav), [class*='sidebar'], [class*='side-nav'], [class*='admin-nav'], [id*='sidebar'], [role='navigation']:not([id='top-nav']), [data-testid*='sidebar' i]"
-    SIDEBAR_TOGGLE_BUTTON = "button[aria-label*='sidebar' i], button[title*='sidebar' i], button[aria-label*='menu' i]"
-    
-    # Sidebar Links - Updated to work with pages that have navigation within content
-    SIDEBAR_LINKS = "#main-content a, .admin-main-section a, [class*='sidebar'] a, aside a, nav:not(#top-nav) a"
-    SIDEBAR_ACTIVE_LINK = "[class*='sidebar'] a[class*='active'], aside a[class*='active'], #main-content a[class*='active']"
-    
+    # ── Locators ──────────────────────────────────────────────────────────────
+    # Jira Align uses several container patterns across different pages.
+    SIDEBAR_CONTAINER = (
+        "aside, "
+        "nav:not(header nav), "
+        "[class*='sidebar'], "
+        "[class*='side-nav'], "
+        "[class*='admin-nav'], "
+        "[id*='sidebar']"
+    )
+    SIDEBAR_TOGGLE_BUTTON = "button[aria-label*='sidebar' i], button[aria-label*='menu' i]"
+    SIDEBAR_LINKS = f"{SIDEBAR_CONTAINER} a"
+    SIDEBAR_ACTIVE_LINK = (
+        "[class*='sidebar'] a[class*='active'], "
+        "aside a[class*='active'], "
+        "nav a[class*='active']"
+    )
+
     def __init__(self, page: Page) -> None:
         super().__init__(page)
 
+    # ── Sidebar state ─────────────────────────────────────────────────────────
+
     def is_sidebar_visible(self) -> bool:
-        """Check if the left sidebar is visible."""
-        return self.page.locator(self.SIDEBAR_CONTAINER).count() > 0 and \
-               self.page.locator(self.SIDEBAR_CONTAINER).first.is_visible()
+        """Return True if a sidebar container is present and visible."""
+        return self.page.locator(self.SIDEBAR_CONTAINER).first.is_visible(timeout=0)
 
     def toggle_sidebar(self) -> None:
-        """Toggle the sidebar visibility if toggle button exists."""
-        if self.page.locator(self.SIDEBAR_TOGGLE_BUTTON).count() > 0:
-            self.page.locator(self.SIDEBAR_TOGGLE_BUTTON).click()
+        """Toggle the sidebar if a toggle button is present."""
+        toggle = self.page.locator(self.SIDEBAR_TOGGLE_BUTTON).first
+        if toggle.is_visible(timeout=0):
+            toggle.click()
+            self._logger.debug("Sidebar toggled")
+
+    # ── Link accessors ────────────────────────────────────────────────────────
 
     def get_sidebar_links(self) -> list[str]:
-        """Get all link texts from the sidebar."""
+        """Return the text of all links in the sidebar."""
         if not self.is_sidebar_visible():
+            self._logger.debug("Sidebar not visible — returning empty link list")
             return []
         return self.page.locator(self.SIDEBAR_LINKS).all_inner_texts()
 
     def get_active_sidebar_link(self) -> str:
-        """Get the text of the currently active sidebar link."""
-        if self.page.locator(self.SIDEBAR_ACTIVE_LINK).count() > 0:
-            return self.page.locator(self.SIDEBAR_ACTIVE_LINK).first.inner_text()
+        """Return the text of the currently active (highlighted) sidebar link."""
+        active = self.page.locator(self.SIDEBAR_ACTIVE_LINK).first
+        if active.is_visible(timeout=0):
+            return active.inner_text()
         return ""
 
+    # ── Assertions ────────────────────────────────────────────────────────────
+
     def expect_sidebar_visible(self) -> None:
-        """Verify the sidebar is visible."""
+        """Assert the sidebar container is visible."""
         expect(self.page.locator(self.SIDEBAR_CONTAINER).first).to_be_visible()

@@ -72,6 +72,10 @@ report.html
 # Keep example environment file
 !.env.example
 
+# Auth storage state (contains session tokens — never commit)
+auth/
+auth/state.json
+
 # IDE - VSCode
 .vscode/
 *.code-workspace
